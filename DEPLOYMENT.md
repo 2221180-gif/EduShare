@@ -28,7 +28,7 @@ Since your application uses **Socket.io** for real-time chat, **Render** is the 
     - **Branch**: `main` (or `master`).
     - **Root Directory**: Leave blank.
     - **Runtime**: `Node`
-    - **Build Command**: `npm install`
+    - **Build Command**: `npm install --legacy-peer-deps`
     - **Start Command**: `node app.js`
     - **Instance Type**: `Free`
 
