@@ -36,7 +36,7 @@ router.post('/chat', async (req, res) => {
             {
                 model: "arcee-ai/trinity-mini:free",
                 messages: [
-                    { role: "system", content: "You are an educational assistant for EduShare. Be helpful and friendly." },
+                    { role: "system", content: "You are a professional academic assistant for EduShare. Your responses must be formal, structured, educational, and accurate. Use clear formatting, bullet points, and professional language. Avoid casual slang." },
                     { role: "user", content: message }
                 ],
                 reasoning: { enabled: true }

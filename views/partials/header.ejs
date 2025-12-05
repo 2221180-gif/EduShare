@@ -80,6 +80,25 @@
                 transform: translateX(100%);
             }
         }
+
+        /* Motivational Banner */
+        .motivational-banner {
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 1rem;
+            font-weight: 500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .motivational-banner i {
+            color: #ffd700;
+        }
     </style>
 </head>
 
@@ -113,6 +132,35 @@
             </ul>
         </div>
     </nav>
+
+    <!-- Motivational Banner -->
+    <div class="motivational-banner">
+        <i class="fas fa-lightbulb"></i>
+        <span id="daily-quote">"Education is the most powerful weapon which you can use to change the world." — Nelson
+            Mandela</span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const quotes = [
+                "The expert in anything was once a beginner. — Helen Hayes",
+                "Education is the passport to the future. — Malcolm X",
+                "Keep going. Everything you need will come to you at the perfect time.",
+                "You don't have to be great to start, but you have to start to be great. — Zig Ziglar",
+                "The way to get started is to quit talking and begin doing. — Walt Disney",
+                "Success is the sum of small efforts, repeated day in and day out. — Robert Collier",
+                "There are no shortcuts to any place worth going. — Beverly Sills",
+                "Motivation is what gets you started. Habit is what keeps you going. — Jim Ryun",
+                "Learning never exhausts the mind. — Leonardo da Vinci",
+                "Your attitude, not your aptitude, will determine your altitude. — Zig Ziglar"
+            ];
+            const quoteElement = document.getElementById('daily-quote');
+            if (quoteElement) {
+                const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+                quoteElement.textContent = randomQuote;
+            }
+        });
+    </script>
 
     <div id="toast-container"></div>
     <main class="container">
