@@ -1,5 +1,7 @@
 </main>
 
+</main>
+
 <footer>
     <div class="container">
         <p>&copy; 2024 EduShare Connect. All rights reserved.</p>
@@ -8,43 +10,40 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/main.js"></script>
-</body>
-
-</html>
 
 <% if (typeof user !=='undefined' && user) { %>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Check if socket is already defined (to avoid conflicts if main.js defines it)
-            // But here we define a local one for notifications
+            console.log('Notification System Loaded');
+
+            // Notification Socket
             const notificationSocket = io();
             const currentUserId = '<%= user.id %>';
 
-            // Join user's personal room for notifications
+            // Join user's personal room
             notificationSocket.emit('join-user', currentUserId);
+            console.log('Joined notification room for user:', currentUserId);
 
             // Listen for new message notifications
             notificationSocket.on('message-notification', (data) => {
-                console.log('New notification:', data);
+                console.log('RECEIVED NOTIFICATION:', data);
+                updateBadge();
+                showToast(data);
+            });
 
-                // 1. Update Badge
+            // Helper to update badge
+            function updateBadge() {
                 const badge = document.getElementById('msg-badge');
                 if (badge) {
                     let count = parseInt(badge.innerText) || 0;
                     badge.innerText = count + 1;
-                    badge.style.display = 'flex'; // Changed to flex for centering if needed, or inline-block
+                    badge.style.display = 'flex';
                     badge.style.justifyContent = 'center';
                     badge.style.alignItems = 'center';
                 }
+            }
 
-                // 2. Show Toast
-                showToast(data);
-
-                // 3. Play Sound (Optional)
-                // const audio = new Audio('/sounds/notification.mp3');
-                // audio.play().catch(e => console.log('Audio play failed', e));
-            });
-
+            // Helper to show toast
             function showToast(data) {
                 const container = document.getElementById('toast-container');
                 if (!container) return;
@@ -61,17 +60,28 @@
                 </div>
             `;
 
-                // Click to go to chat
                 toast.onclick = () => window.location.href = '/communication';
-
                 container.appendChild(toast);
 
-                // Remove after 5 seconds
                 setTimeout(() => {
                     toast.style.animation = 'fadeOut 0.5s forwards';
                     setTimeout(() => toast.remove(), 500);
                 }, 5000);
             }
+
+            // --- DEBUGGING TOOL (Remove later) ---
+            // Expose function to window so user can test it
+            window.testNotification = function () {
+                console.log('Testing notification...');
+                updateBadge();
+                showToast({
+                    sender: 'Test System',
+                    message: 'This is a test notification to prove the UI works!'
+                });
+            };
         });
     </script>
     <% } %>
+        </body>
+
+        </html>
