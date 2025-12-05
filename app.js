@@ -50,6 +50,7 @@ app.use('/communication', require('./routes/communication'));
 app.use('/premium', require('./routes/premium'));
 app.use('/ai', require('./routes/ai'));
 app.use('/ai-assistant', require('./routes/ai-chat'));
+app.use('/gamification', require('./routes/gamification'));
 
 
 // Home Route

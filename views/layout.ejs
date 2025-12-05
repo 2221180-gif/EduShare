@@ -1,13 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= typeof title !== 'undefined' ? title : 'EduShare Connect' %></title>
-    <link rel="stylesheet" href="/css/style.css">
+    <title>
+        <%= typeof title !=='undefined' ? title : 'EduShare Connect' %>
+    </title>
+    <link rel="stylesheet" href="/css/style.css?v=2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+
 <body>
+    <div class="emoji-background">
+        <div class="floating-emoji">📚</div>
+        <div class="floating-emoji">🎓</div>
+        <div class="floating-emoji">✏️</div>
+        <div class="floating-emoji">💡</div>
+        <div class="floating-emoji">🔬</div>
+        <div class="floating-emoji">🎨</div>
+        <div class="floating-emoji">🚀</div>
+        <div class="floating-emoji">🧠</div>
+        <div class="floating-emoji">📝</div>
+        <div class="floating-emoji">🌏</div>
+    </div>
     <nav class="navbar">
         <div class="container">
             <a href="/" class="logo">EduShare Connect</a>
@@ -23,10 +39,10 @@
                         <span>Welcome, <%= user.username %></span>
                         <a href="/logout" class="btn-small">Logout</a>
                     </li>
-                <% } else { %>
-                    <li><a href="/login">Login</a></li>
-                    <li><a href="/register">Register</a></li>
-                <% } %>
+                    <% } else { %>
+                        <li><a href="/login">Login</a></li>
+                        <li><a href="/register">Register</a></li>
+                        <% } %>
             </ul>
         </div>
     </nav>
@@ -44,4 +60,5 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/main.js"></script>
 </body>
+
 </html>

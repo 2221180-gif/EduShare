@@ -61,30 +61,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-// View Resource
-router.get('/:id', async (req, res) => {
-    try {
-        const resource = await Resource.findById(req.params.id)
-            .populate('uploader', 'username profile')
-            .populate('ratings.user', 'username');
-
-        if (!resource) return res.status(404).send('Resource not found');
-
-        // Increment views
-        resource.views += 1;
-        await resource.save();
-
-        res.render('pages/resources/view', {
-            title: resource.title + ' - EduShare Connect',
-            user: req.session.user,
-            resource
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Server Error');
-    }
-});
-
 // Upload Page
 router.get('/upload/new', (req, res) => {
     if (!req.session.user) return res.redirect('/login');
@@ -121,6 +97,15 @@ router.post('/upload', upload.single('resourceFile'), async (req, res) => {
         });
 
         await resource.save();
+
+        // Update user gamification stats
+        await User.findByIdAndUpdate(req.session.user.id, {
+            $inc: {
+                'gamification.uploads': 1,
+                'gamification.points': 0.5
+            }
+        });
+
         res.redirect('/resources');
     } catch (error) {
         console.error(error);
@@ -151,6 +136,33 @@ router.get('/pdf-proxy/:id', async (req, res) => {
     } catch (error) {
         console.error('PDF proxy error:', error);
         res.status(500).send('Error loading PDF');
+    }
+});
+
+// View Resource
+router.get('/:id', async (req, res) => {
+    try {
+        const resource = await Resource.findById(req.params.id)
+            .populate('uploader', 'username profile')
+            .populate('ratings.user', 'username');
+
+        if (!resource) return res.status(404).send('Resource not found');
+
+        // Increment views
+        resource.views += 1;
+        await resource.save();
+
+        res.render('pages/resources/view', {
+            title: resource.title + ' - EduShare Connect',
+            user: req.session.user,
+            resource
+        });
+    } catch (error) {
+        // If the ID is not a valid ObjectId (like "upload" if the route was wrong), handle it
+        if (req.originalUrl.includes('/upload')) return res.redirect('/resources/upload/new');
+
+        console.error(error);
+        res.status(500).send('Server Error');
     }
 });
 
