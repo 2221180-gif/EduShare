@@ -1,0 +1,59 @@
+<%- include('../../partials/header') %>
+    <div class="mb-2">
+        <h1>Educational Resources</h1>
+        <p>Browse and download resources shared by the community.</p>
+    </div>
+
+    <div class="card mb-2">
+        <form action="/resources" method="GET" style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <input type="text" name="search" placeholder="Search resources..."
+                value="<%= typeof search !== 'undefined' ? search : '' %>" style="flex: 2;">
+            <select name="subject" style="flex: 1;">
+                <option value="">All Subjects</option>
+                <option value="Mathematics" <%=typeof subject !=='undefined' && subject==='Mathematics' ? 'selected'
+                    : '' %>>Mathematics</option>
+                <option value="Science" <%=typeof subject !=='undefined' && subject==='Science' ? 'selected' : '' %>
+                    >Science</option>
+                <option value="History" <%=typeof subject !=='undefined' && subject==='History' ? 'selected' : '' %>
+                    >History</option>
+                <option value="Literature" <%=typeof subject !=='undefined' && subject==='Literature' ? 'selected' : ''
+                    %>>Literature</option>
+            </select>
+            <select name="grade" style="flex: 1;">
+                <option value="">All Grades</option>
+                <option value="K-5" <%=typeof grade !=='undefined' && grade==='K-5' ? 'selected' : '' %>>K-5</option>
+                <option value="6-8" <%=typeof grade !=='undefined' && grade==='6-8' ? 'selected' : '' %>>6-8</option>
+                <option value="9-12" <%=typeof grade !=='undefined' && grade==='9-12' ? 'selected' : '' %>>9-12</option>
+                <option value="University" <%=typeof grade !=='undefined' && grade==='University' ? 'selected' : '' %>
+                    >University</option>
+            </select>
+            <button type="submit" class="btn">Filter</button>
+        </form>
+    </div>
+
+    <div class="grid">
+        <% if (resources.length> 0) { %>
+            <% resources.forEach(resource=> { %>
+                <div class="card">
+                    <h3>
+                        <%= resource.title %>
+                    </h3>
+                    <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 10px;">
+                        By <%= resource.uploader ? resource.uploader.username : 'Unknown' %> | <%= resource.subject %>
+                    </p>
+                    <p>
+                        <%= resource.description.substring(0, 100) %>...
+                    </p>
+                    <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                        <span class="badge" style="background: #eee; padding: 2px 6px; border-radius: 4px;">
+                            <%= resource.fileType.toUpperCase() %>
+                        </span>
+                        <a href="/resources/<%= resource._id %>" class="btn-small">View Details</a>
+                    </div>
+                </div>
+                <% }) %>
+                    <% } else { %>
+                        <p>No resources found.</p>
+                        <% } %>
+    </div>
+    <%- include('../../partials/footer') %>

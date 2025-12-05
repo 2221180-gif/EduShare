@@ -1,0 +1,121 @@
+<%- include('../partials/header') %>
+    <div class="mb-2">
+        <h1>Messages</h1>
+    </div>
+
+    <div class="chat-container">
+        <div class="chat-sidebar">
+            <div style="padding: 15px; border-bottom: 1px solid #eee; font-weight: bold;">
+                Contacts
+            </div>
+            <ul style="list-style: none;">
+                <% users.forEach(u=> { %>
+                    <li style="padding: 15px; border-bottom: 1px solid #f5f5f5; cursor: pointer;"
+                        onclick="selectUser('<%= u._id %>', '<%= u.username %>')">
+                        <%= u.username %>
+                    </li>
+                    <% }) %>
+            </ul>
+        </div>
+
+        <div class="chat-main">
+            <div id="chat-header"
+                style="padding: 15px; border-bottom: 1px solid #eee; font-weight: bold; display: none;">
+                Chatting with <span id="chat-with-username"></span>
+            </div>
+
+            <div id="chat-messages" class="chat-messages">
+                <div style="text-align: center; color: #999; margin-top: 50px;">
+                    Select a user to start chatting
+                </div>
+            </div>
+
+            <div id="chat-input-area" class="chat-input" style="display: none;">
+                <input type="text" id="message-input" placeholder="Type a message..."
+                    style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                <button onclick="sendMessage()" class="btn">Send</button>
+            </div>
+        </div>
+    </div>
+    <%- include('../partials/footer') %>
+
+        <script>
+            window.addEventListener('load', function () {
+                let currentReceiverId = null;
+                let currentConversationId = null;
+                const currentUserId = '<%= user.id %>';
+                const socket = io();
+
+                socket.emit('join-user', currentUserId);
+
+                socket.on('new-message', (message) => {
+                    if (message.conversationId === currentConversationId) {
+                        appendMessage(message);
+                    }
+                });
+
+                window.selectUser = async function (userId, username) {
+                    try {
+                        console.log('Selecting user:', userId, username);
+                        currentReceiverId = userId;
+                        document.getElementById('chat-with-username').innerText = username;
+                        document.getElementById('chat-header').style.display = 'block';
+                        document.getElementById('chat-input-area').style.display = 'flex';
+
+                        // Fetch history
+                        console.log('Fetching conversation history...');
+                        const res = await fetch(`/communication/history/${userId}`);
+
+                        if (!res.ok) {
+                            throw new Error(`HTTP error! status: ${res.status}`);
+                        }
+
+                        const data = await res.json();
+                        console.log('Conversation data:', data);
+
+                        currentConversationId = data.conversationId;
+                        socket.emit('join-conversation', currentConversationId);
+
+                        const messagesDiv = document.getElementById('chat-messages');
+                        messagesDiv.innerHTML = '';
+
+                        if (data.messages && data.messages.length > 0) {
+                            data.messages.forEach(msg => {
+                                appendMessage(msg);
+                            });
+                        } else {
+                            messagesDiv.innerHTML = '<div style="text-align: center; color: #999; margin-top: 50px;">No messages yet. Start the conversation!</div>';
+                        }
+
+                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                    } catch (error) {
+                        console.error('Error selecting user:', error);
+                        alert('Error loading conversation: ' + error.message);
+                    }
+                };
+
+                window.sendMessage = function () {
+                    const input = document.getElementById('message-input');
+                    const content = input.value.trim();
+                    if (!content) return;
+
+                    socket.emit('send-message', {
+                        senderId: currentUserId,
+                        receiverId: currentReceiverId,
+                        content: content,
+                        conversationId: currentConversationId
+                    });
+
+                    input.value = '';
+                };
+
+                function appendMessage(msg) {
+                    const div = document.createElement('div');
+                    const isMe = msg.sender._id === currentUserId || msg.sender === currentUserId;
+                    div.className = `message ${isMe ? 'sent' : 'received'}`;
+                    div.innerText = msg.content;
+                    document.getElementById('chat-messages').appendChild(div);
+                    document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+                }
+            });
+        </script>

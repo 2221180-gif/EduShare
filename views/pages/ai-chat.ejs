@@ -1,0 +1,457 @@
+<%- include('../partials/header') %>
+    <div class="mb-2">
+        <h1>🤖 AI Learning Assistant</h1>
+        <p style="color: var(--text-muted); font-size: 1.1rem;">Get instant help with your studies, homework, and
+            learning questions! Upload files for summaries and assignment help.</p>
+    </div>
+
+    <div class="ai-chat-container">
+        <div class="ai-chat-messages" id="ai-chat-messages">
+            <div class="ai-message">
+                <div class="ai-avatar">🤖</div>
+                <div class="ai-content">
+                    <strong>AI Assistant</strong>
+                    <p>Hello! I'm your AI learning assistant. I can help you with:</p>
+                    <ul style="margin: 10px 0; padding-left: 20px;">
+                        <li>📚 Educational questions and study tips</li>
+                        <li>📄 Summarize uploaded documents (PDF, images)</li>
+                        <li>✍️ Assignment help and concept explanations</li>
+                        <li>💡 Learning strategies and guidance</li>
+                    </ul>
+                    <p style="margin-top: 10px;"><strong>Upload a file or ask me anything!</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="ai-chat-input-area">
+            <!-- File Upload Section -->
+            <div id="file-upload-section"
+                style="display: none; padding: 15px; background: #f5f5f5; border-radius: 8px; margin-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <span id="file-name" style="font-weight: 500; color: #333;"></span>
+                    <button onclick="cancelFile()"
+                        style="background: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="analyzeFile('summary')" class="btn" style="flex: 1; background: #2196F3;">
+                        <i class="fas fa-file-alt"></i> Get Summary
+                    </button>
+                    <button onclick="analyzeFile('help')" class="btn" style="flex: 1; background: #FF9800;">
+                        <i class="fas fa-question-circle"></i> Get Help
+                    </button>
+                </div>
+            </div>
+
+            <!-- Regular Chat Input -->
+            <div style="display: flex; gap: 10px;">
+                <input type="file" id="file-input" accept=".pdf,image/*,.txt" style="display: none;"
+                    onchange="handleFileSelect(event)">
+
+                <button onclick="document.getElementById('file-input').click()" class="btn"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 14px 20px;">
+                    <i class="fas fa-paperclip"></i>
+                </button>
+
+                <input type="text" id="ai-message-input" placeholder="Ask me anything about your studies..."
+                    onkeypress="if(event.key === 'Enter') sendAIMessage()">
+
+                <button onclick="sendAIMessage()" class="btn" id="send-btn">
+                    <i class="fas fa-paper-plane"></i> Send
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .ai-chat-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow-lg);
+            max-width: 1000px;
+            margin: 40px auto;
+            height: 650px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .ai-chat-messages {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            background: #fafbfc;
+        }
+
+        .ai-message,
+        .user-message {
+            margin-bottom: 24px;
+            display: flex;
+            gap: 16px;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ai-avatar,
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .ai-avatar {
+            background: var(--primary-gradient);
+        }
+
+        .user-avatar {
+            background: var(--secondary-gradient);
+        }
+
+        .ai-content,
+        .user-content {
+            flex: 1;
+            background: white;
+            padding: 16px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .user-content {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+        }
+
+        .ai-content strong,
+        .user-content strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .user-content strong {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .ai-content p,
+        .user-content p {
+            margin: 0;
+            line-height: 1.7;
+        }
+
+        .file-badge {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .ai-chat-input-area {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            background: white;
+        }
+
+        #ai-message-input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        #ai-message-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        #send-btn {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        #send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        #send-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 6px;
+            padding: 12px 0;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+            }
+
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+
+    <script>
+        let selectedFile = null;
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            selectedFile = file;
+            document.getElementById('file-upload-section').style.display = 'block';
+            document.getElementById('file-name').innerHTML = `<i class="fas fa-file"></i> ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+        }
+
+        function cancelFile() {
+            selectedFile = null;
+            document.getElementById('file-upload-section').style.display = 'none';
+            document.getElementById('file-input').value = '';
+        }
+
+        async function analyzeFile(action) {
+            if (!selectedFile) return;
+
+            const sendBtn = document.getElementById('send-btn');
+            const messagesContainer = document.getElementById('ai-chat-messages');
+
+            // Disable buttons
+            sendBtn.disabled = true;
+
+            // Show user's file upload
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'user-message';
+            userMessageDiv.innerHTML = `
+                <div class="user-avatar">👤</div>
+                <div class="user-content">
+                    <strong>You</strong>
+                    <p>Uploaded: <strong>${selectedFile.name}</strong></p>
+                    <p style="margin-top: 5px;">Action: ${action === 'summary' ? '📄 Get Summary' : '✍️ Get Help'}</p>
+                </div>
+            `;
+            messagesContainer.appendChild(userMessageDiv);
+
+            // Show typing indicator
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'ai-message';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="ai-avatar">🤖</div>
+                <div class="ai-content">
+                    <div class="typing-indicator">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            try {
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+                formData.append('action', action);
+
+                const response = await fetch('/ai-assistant/analyze-file', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                // Remove typing indicator
+                document.getElementById('typing-indicator').remove();
+
+                if (data.success) {
+                    const aiMessageDiv = document.createElement('div');
+                    aiMessageDiv.className = 'ai-message';
+                    aiMessageDiv.innerHTML = `
+                        <div class="ai-avatar">🤖</div>
+                        <div class="ai-content">
+                            <strong>AI Assistant</strong>
+                            <p>${escapeHtml(data.response).replace(/\n/g, '<br>')}</p>
+                            <div class="file-badge">
+                                <i class="fas fa-check-circle"></i> Analyzed: ${data.fileName}
+                            </div>
+                        </div>
+                    `;
+                    messagesContainer.appendChild(aiMessageDiv);
+                } else {
+                    showError(data.error || 'Failed to analyze file');
+                }
+
+            } catch (error) {
+                const typing = document.getElementById('typing-indicator');
+                if (typing) typing.remove();
+                showError('Network error. Please try again.');
+            }
+
+            // Reset
+            cancelFile();
+            sendBtn.disabled = false;
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        async function sendAIMessage() {
+            const input = document.getElementById('ai-message-input');
+            const sendBtn = document.getElementById('send-btn');
+            const messagesContainer = document.getElementById('ai-chat-messages');
+
+            const message = input.value.trim();
+            if (!message) return;
+
+            // Disable input
+            input.disabled = true;
+            sendBtn.disabled = true;
+
+            // Add user message to chat
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'user-message';
+            userMessageDiv.innerHTML = `
+                <div class="user-avatar">👤</div>
+                <div class="user-content">
+                    <strong>You</strong>
+                    <p>${escapeHtml(message)}</p>
+                </div>
+            `;
+            messagesContainer.appendChild(userMessageDiv);
+
+            // Clear input
+            input.value = '';
+
+            // Show typing indicator
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'ai-message';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="ai-avatar">🤖</div>
+                <div class="ai-content">
+                    <div class="typing-indicator">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            try {
+                const response = await fetch('/ai-assistant/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message })
+                });
+
+                const data = await response.json();
+
+                // Remove typing indicator
+                document.getElementById('typing-indicator').remove();
+
+                if (data.success) {
+                    const aiMessageDiv = document.createElement('div');
+                    aiMessageDiv.className = 'ai-message';
+                    aiMessageDiv.innerHTML = `
+                        <div class="ai-avatar">🤖</div>
+                        <div class="ai-content">
+                            <strong>AI Assistant</strong>
+                            <p>${escapeHtml(data.response).replace(/\n/g, '<br>')}</p>
+                        </div>
+                    `;
+                    messagesContainer.appendChild(aiMessageDiv);
+                } else {
+                    showError(data.error || 'Failed to get response');
+                }
+
+            } catch (error) {
+                const typing = document.getElementById('typing-indicator');
+                if (typing) typing.remove();
+                showError('Network error. Please check your connection and try again.');
+            }
+
+            // Re-enable input
+            input.disabled = false;
+            sendBtn.disabled = false;
+            input.focus();
+
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function showError(errorMessage) {
+            const messagesContainer = document.getElementById('ai-chat-messages');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'ai-message';
+            errorDiv.innerHTML = `
+                <div class="ai-avatar">⚠️</div>
+                <div class="ai-content">
+                    <strong>Error</strong>
+                    <p style="color: #c53030;">${escapeHtml(errorMessage)}</p>
+                </div>
+            `;
+            messagesContainer.appendChild(errorDiv);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+    <%- include('../partials/footer') %>

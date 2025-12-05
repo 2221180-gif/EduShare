@@ -1,0 +1,32 @@
+<%- include('../partials/header') %>
+    <div class="mb-2">
+        <h1><i class="fas fa-robot"></i> AI Recommendations</h1>
+        <p>Personalized learning resources picked just for you.</p>
+    </div>
+
+    <div class="grid">
+        <% if (recommendations.length> 0) { %>
+            <% recommendations.forEach(resource=> { %>
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between;">
+                        <h3>
+                            <%= resource.title %>
+                        </h3>
+                        <span class="badge" style="background: #e1f5fe; color: #0277bd; height: fit-content;">Match:
+                            95%</span>
+                    </div>
+                    <p class="text-muted">By <%= resource.uploader ? resource.uploader.username : 'Unknown' %>
+                    </p>
+                    <p>
+                        <%= resource.description.substring(0, 100) %>...
+                    </p>
+                    <div style="margin-top: 15px;">
+                        <a href="/resources/<%= resource._id %>" class="btn-small">View</a>
+                    </div>
+                </div>
+                <% }) %>
+                    <% } else { %>
+                        <p>No recommendations available yet. Try browsing more resources!</p>
+                        <% } %>
+    </div>
+    <%- include('../partials/footer') %>

@@ -1,0 +1,58 @@
+<%- include('../../partials/header') %>
+    <div class="card" style="max-width: 600px; margin: 0 auto;">
+        <h2 class="text-center mb-2">Upload Resource</h2>
+
+        <form action="/resources/upload" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="4" required></textarea>
+            </div>
+
+            <div class="grid">
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <select id="subject" name="subject" required>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="Science">Science</option>
+                        <option value="History">History</option>
+                        <option value="Literature">Literature</option>
+                        <option value="Computer Science">Computer Science</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="gradeLevel">Grade Level</label>
+                    <select id="gradeLevel" name="gradeLevel" required>
+                        <option value="K-5">K-5</option>
+                        <option value="6-8">6-8</option>
+                        <option value="9-12">9-12</option>
+                        <option value="University">University</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="tags">Tags (comma separated)</label>
+                <input type="text" id="tags" name="tags" placeholder="algebra, math, notes">
+            </div>
+
+            <div class="form-group">
+                <label for="resourceFile">File</label>
+                <input type="file" id="resourceFile" name="resourceFile" required>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="isPremium"> Mark as Premium Content
+                </label>
+            </div>
+
+            <button type="submit" class="btn" style="width: 100%;">Upload</button>
+        </form>
+    </div>
+    <%- include('../../partials/footer') %>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title : 'EduShare Connect' %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">EduShare Connect</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/resources">Resources</a></li>
+                <% if (user) { %>
+                    <li><a href="/communication">Chat</a></li>
+                    <li><a href="/premium">Premium</a></li>
+                    <li><a href="/ai/recommendations">AI Picks</a></li>
+                    <li><a href="/resources/upload/new">Upload</a></li>
+                    <li class="user-menu">
+                        <span>Welcome, <%= user.username %></span>
+                        <a href="/logout" class="btn-small">Logout</a>
+                    </li>
+                <% } else { %>
+                    <li><a href="/login">Login</a></li>
+                    <li><a href="/register">Register</a></li>
+                <% } %>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <%- body %>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 EduShare Connect. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>
