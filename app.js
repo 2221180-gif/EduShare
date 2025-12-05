@@ -51,6 +51,8 @@ app.use('/premium', require('./routes/premium'));
 app.use('/ai', require('./routes/ai'));
 app.use('/ai-assistant', require('./routes/ai-chat'));
 app.use('/gamification', require('./routes/gamification'));
+app.use('/portal', require('./routes/portal'));
+app.use('/reels', require('./routes/reels'));
 
 
 // Home Route

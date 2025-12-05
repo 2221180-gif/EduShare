@@ -1,0 +1,243 @@
+<%- include('../partials/header') %>
+
+    <style>
+        /* Full-screen container */
+        .reels-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: #000;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            -webkit-overflow-scrolling: touch;
+            z-index: 1;
+        }
+
+        /* Hide scrollbar but keep functionality */
+        .reels-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Each reel section */
+        .reel-item {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            scroll-snap-align: start;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+        }
+
+        /* Video iframe */
+        .reel-video {
+            width: 100%;
+            max-width: 500px;
+            height: 90vh;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Overlay info */
+        .reel-info {
+            position: absolute;
+            bottom: 100px;
+            left: 20px;
+            right: 20px;
+            color: white;
+            z-index: 10;
+            max-width: 400px;
+        }
+
+        .reel-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+            font-weight: 600;
+        }
+
+        .reel-category {
+            display: inline-block;
+            padding: 6px 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Navigation hint */
+        .scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            animation: bounce 2s infinite;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+        }
+
+        /* Counter badge */
+        .reel-counter {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Header adjustments */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .reel-video {
+                max-width: 100%;
+                height: 100vh;
+                border-radius: 0;
+            }
+
+            .reel-info {
+                bottom: 120px;
+                left: 15px;
+                right: 15px;
+            }
+
+            .reel-counter {
+                top: 70px;
+            }
+        }
+    </style>
+
+    <div class="reels-container" id="reelsContainer">
+        <% if (reels && reels.length> 0) { %>
+            <% reels.forEach((reel, index)=> { %>
+                <div class="reel-item" data-index="<%= index %>">
+                    <div class="reel-counter">
+                        <%= index + 1 %> / <%= reels.length %>
+                    </div>
+
+                    <iframe class="reel-video" id="video-<%= index %>"
+                        src="https://www.youtube.com/embed/<%= reel.id %>?enablejsapi=1&autoplay=0&mute=0&controls=1&rel=0&modestbranding=1&playsinline=1"
+                        allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy">
+                    </iframe>
+
+                    <div class="reel-info">
+                        <span class="reel-category"><i class="fas fa-graduation-cap"></i>
+                            <%= reel.category %>
+                        </span>
+                        <h3>
+                            <%= reel.title %>
+                        </h3>
+                    </div>
+
+                    <% if (index===0) { %>
+                        <div class="scroll-hint">
+                            <i class="fas fa-chevron-down"></i> Swipe up for more
+                        </div>
+                        <% } %>
+                </div>
+                <% }); %>
+                    <% } else { %>
+                        <div class="reel-item" style="color: white; text-align: center;">
+                            <div>
+                                <i class="fas fa-video fa-3x" style="margin-bottom: 20px; opacity: 0.5;"></i>
+                                <p>No reels available at the moment.</p>
+                            </div>
+                        </div>
+                        <% } %>
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        let players = [];
+        let currentVideoIndex = 0;
+
+        // Initialize YouTube players when API is ready
+        function onYouTubeIframeAPIReady() {
+            const iframes = document.querySelectorAll('.reel-video');
+
+            iframes.forEach((iframe, index) => {
+                players[index] = new YT.Player(iframe.id, {
+                    events: {
+                        'onReady': (event) => {
+                            if (index === 0) {
+                                // Auto-play first video
+                                event.target.playVideo();
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
+        // Intersection Observer to control video playback
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.75 // 75% of video must be visible
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const videoIndex = parseInt(entry.target.dataset.index);
+
+                if (entry.isIntersecting) {
+                    // Play this video
+                    currentVideoIndex = videoIndex;
+                    if (players[videoIndex] && players[videoIndex].playVideo) {
+                        players[videoIndex].playVideo();
+                    }
+
+                    // Pause all other videos
+                    players.forEach((player, index) => {
+                        if (index !== videoIndex && player && player.pauseVideo) {
+                            player.pauseVideo();
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        // Observe all reel items
+        document.addEventListener('DOMContentLoaded', () => {
+            const reelItems = document.querySelectorAll('.reel-item');
+            reelItems.forEach(item => observer.observe(item));
+        });
+    </script>
+
+    <!-- Footer not included for full-screen experience -->

@@ -10,7 +10,7 @@
     --secondary-color: #764ba2;
     --accent-color: #f5576c;
     --success-color: #4facfe;
-    --background-color: #f8f9fc;
+    --background-color: #edf2f7;
     --text-color: #2d3748;
     --text-muted: #718096;
     --white: #ffffff;
@@ -77,7 +77,7 @@ body {
 .nav-links {
     list-style: none;
     display: flex;
-    gap: 32px;
+    gap: 12px;
     align-items: center;
 }
 
@@ -85,9 +85,10 @@ body {
     text-decoration: none;
     color: var(--text-color);
     font-weight: 500;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     transition: var(--transition);
     position: relative;
+    white-space: nowrap;
 }
 
 .nav-links a:hover {
@@ -95,18 +96,49 @@ body {
 }
 
 .nav-links a::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--primary-gradient);
-    transition: width 0.3s ease;
+    display: none;
 }
 
 .nav-links a:hover::after {
     width: 100%;
+}
+
+/* Highlighted Nav Items */
+.nav-item-highlight {
+    padding: 6px 14px;
+    border-radius: 20px;
+    background-color: rgba(102, 126, 234, 0.08);
+    color: var(--primary-color) !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-item-highlight:hover {
+    background-color: var(--primary-color);
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.nav-item-highlight::after {
+    display: none;
+}
+
+/* Special AI Assistant Button */
+.nav-item-highlight.special {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white !important;
+    border: none;
+    box-shadow: 0 4px 15px rgba(118, 75, 162, 0.2);
+}
+
+.nav-item-highlight.special:hover {
+    box-shadow: 0 6px 20px rgba(118, 75, 162, 0.4);
+    transform: translateY(-2px) scale(1.05);
 }
 
 .user-menu {

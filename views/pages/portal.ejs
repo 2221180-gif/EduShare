@@ -1,0 +1,95 @@
+<%- include('../partials/header') %>
+
+    <div class="hero" style="padding: 60px 0; margin-bottom: 40px;">
+        <div class="container text-center">
+            <h1>🇧🇩 Bangladesh News & Jobs Portal</h1>
+            <p>Stay updated with the latest educational news and career opportunities.</p>
+        </div>
+    </div>
+
+    <div class="container" style="margin-bottom: 80px;">
+        <% if (locals.error) { %>
+            <div class="alert alert-error">
+                <%= error %>
+            </div>
+            <% } %>
+
+                <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 40px;">
+                    <!-- Column 1: Educational News -->
+                    <section>
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
+                            <i class="fas fa-newspaper fa-2x" style="color: var(--primary-color);"></i>
+                            <h2 style="font-size: 1.8rem;">Educational News</h2>
+                        </div>
+
+                        <div class="news-list" style="display: flex; flex-direction: column; gap: 20px;">
+                            <% if (news && news.length> 0) { %>
+                                <% news.forEach(item=> { %>
+                                    <a href="<%= item.link %>" target="_blank" class="card"
+                                        style="text-decoration: none; display: block; padding: 25px; transition: transform 0.2s;">
+                                        <div
+                                            style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                            <span class="badge"
+                                                style="background: #e2e8f0; color: #4a5568; font-weight: 500;">
+                                                <%= item.source %>
+                                            </span>
+                                            <small style="color: #718096;">
+                                                <%= item.pubDate %>
+                                            </small>
+                                        </div>
+                                        <h3 style="font-size: 1.2rem; margin-bottom: 10px; color: var(--text-color);">
+                                            <%= item.title %>
+                                        </h3>
+                                        <p
+                                            style="font-size: 0.95rem; color: var(--text-muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                            <%= item.snippet %>
+                                        </p>
+                                    </a>
+                                    <% }); %>
+                                        <% } else { %>
+                                            <p class="text-muted">No news available at the moment.</p>
+                                            <% } %>
+                        </div>
+                    </section>
+
+                    <!-- Column 2: Job Circulars -->
+                    <section>
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
+                            <i class="fas fa-briefcase fa-2x" style="color: var(--accent-color);"></i>
+                            <h2 style="font-size: 1.8rem;">Job Circulars</h2>
+                        </div>
+
+                        <div class="jobs-list" style="display: flex; flex-direction: column; gap: 20px;">
+                            <% if (jobs && jobs.length> 0) { %>
+                                <% jobs.forEach(item=> { %>
+                                    <a href="<%= item.link %>" target="_blank" class="card"
+                                        style="text-decoration: none; display: block; padding: 25px; border-left: 4px solid var(--accent-color);">
+                                        <div
+                                            style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                            <span class="badge"
+                                                style="background: #fff5f5; color: var(--accent-color); font-weight: 500;">New
+                                                Opening</span>
+                                            <small style="color: #718096;">
+                                                <%= item.pubDate %>
+                                            </small>
+                                        </div>
+                                        <h3 style="font-size: 1.2rem; margin-bottom: 10px; color: var(--text-color);">
+                                            <%= item.title %>
+                                        </h3>
+                                        <div style="display: flex; gap: 10px; margin-top: 15px;">
+                                            <span style="font-size: 0.85rem; color: #718096;"><i
+                                                    class="fas fa-search"></i>
+                                                <%= item.source %>
+                                            </span>
+                                        </div>
+                                    </a>
+                                    <% }); %>
+                                        <% } else { %>
+                                            <p class="text-muted">No job circulars found at the moment.</p>
+                                            <% } %>
+                        </div>
+                    </section>
+                </div>
+    </div>
+
+    <%- include('../partials/footer') %>
