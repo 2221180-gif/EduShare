@@ -33,8 +33,38 @@ const userSchema = new mongoose.Schema({
     gamification: {
         points: { type: Number, default: 0 },
         uploads: { type: Number, default: 0 },
-        downloads: { type: Number, default: 0 }
+        downloads: { type: Number, default: 0 },
+        badges: [{
+            badgeId: String,
+            earnedAt: { type: Date, default: Date.now }
+        }],
+        streak: {
+            current: { type: Number, default: 0 },
+            longest: { type: Number, default: 0 },
+            lastActivity: Date
+        }
     },
+    favorites: {
+        resources: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Resource'
+        }],
+        courses: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Course'
+        }]
+    },
+    enrolledCourses: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Course'
+    }],
+    completedCourses: [{
+        course: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Course'
+        },
+        completedAt: Date
+    }],
     createdAt: {
         type: Date,
         default: Date.now

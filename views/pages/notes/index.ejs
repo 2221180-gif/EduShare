@@ -1,0 +1,197 @@
+<% const pageTitle='My Notes - EduShare Connect' ; const currentUser=user; %>
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            <%= pageTitle %>
+        </title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" href="/css/design-system.css">
+        <link rel="stylesheet" href="/css/components.css">
+        <link rel="stylesheet" href="/css/style.css">
+    </head>
+
+    <body>
+
+        <!-- Hero Section -->
+        <div
+            style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white; padding: 3rem 0 4rem; margin-bottom: 2rem;">
+            <div class="container">
+                <h1 style="color: white; margin-bottom: 1rem; font-size: 2.5rem;">📝 My Notes</h1>
+                <p style="font-size: 1.125rem; opacity: 0.9;">Your learning notes and highlights</p>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Search & Actions -->
+            <div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+                <form action="/notes" method="GET" style="flex: 1; min-width: 300px;">
+                    <div class="search-input-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" name="search" class="search-input" placeholder="Search your notes..."
+                            value="<%= search || '' %>">
+                    </div>
+                </form>
+                <button class="btn btn-primary" id="quickNoteBtn">✏️ New Note</button>
+                <a href="/notes/export/json" class="btn btn-outline">📥 Export All</a>
+            </div>
+
+            <!-- Stats -->
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                <div class="card" style="text-align: center;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📝</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem;">
+                        <%= notes.length %>
+                    </div>
+                    <div style="color: var(--text-secondary); font-size: 0.875rem;">Total Notes</div>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏷️</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem;">
+                        <%= [...new Set(notes.flatMap(n=> n.tags || []))].length %>
+                    </div>
+                    <div style="color: var(--text-secondary); font-size: 0.875rem;">Unique Tags</div>
+                </div>
+            </div>
+
+            <!-- Notes List -->
+            <div id="notesList">
+                <% if (notes.length> 0) { %>
+                    <% notes.forEach(note=> { %>
+                        <div class="card"
+                            style="margin-bottom: 1rem; border-left: 4px solid <%= note.color || '#FFD93D' %>;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                                <div style="flex: 1;">
+                                    <h3 style="margin-bottom: 0.5rem;">
+                                        <%= note.title %>
+                                    </h3>
+                                    <div
+                                        style="display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.875rem; color: var(--text-tertiary);">
+                                        <span>📅 <%= new Date(note.createdAt).toLocaleDateString() %></span>
+                                        <% if (note.resource) { %>
+                                            <span>📖 <%= note.resource.title %></span>
+                                            <% } %>
+                                                <% if (note.course) { %>
+                                                    <span>🎓 <%= note.course.title %></span>
+                                                    <% } %>
+                                                        <% if (note.videoTimestamp) { %>
+                                                            <span>🎥 <%= Math.floor(note.videoTimestamp / 60) %>:<%=
+                                                                        String(note.videoTimestamp % 60).padStart(2, '0'
+                                                                        ) %></span>
+                                                            <% } %>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-sm btn-outline" onclick="editNote('<%= note._id %>')">✏️
+                                        Edit</button>
+                                    <button class="btn btn-sm btn-outline" onclick="deleteNote('<%= note._id %>')"
+                                        style="color: var(--danger);">🗑️ Delete</button>
+                                </div>
+                            </div>
+
+                            <p style="color: var(--text-secondary); margin-bottom: 1rem; white-space: pre-wrap;">
+                                <%= note.content %>
+                            </p>
+
+                            <% if (note.tags && note.tags.length> 0) { %>
+                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                    <% note.tags.forEach(tag=> { %>
+                                        <span class="badge badge-secondary">🏷️ <%= tag %></span>
+                                        <% }) %>
+                                </div>
+                                <% } %>
+
+                                    <% if (note.videoTimestamp) { %>
+                                        <button class="btn btn-sm btn-primary"
+                                            onclick="jumpToTimestamp(<%= note.videoTimestamp %>)"
+                                            style="margin-top: 1rem;">
+                                            ▶️ Jump to <%= Math.floor(note.videoTimestamp / 60) %>:<%=
+                                                    String(note.videoTimestamp % 60).padStart(2, '0' ) %>
+                                        </button>
+                                        <% } %>
+                        </div>
+                        <% }) %>
+                            <% } else { %>
+                                <div class="card" style="text-align: center; padding: 4rem 2rem;">
+                                    <div style="font-size: 4rem; margin-bottom: 1rem;">📝</div>
+                                    <h3>No notes yet</h3>
+                                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                                        Start taking notes while learning. Use <kbd>Ctrl+N</kbd> or <kbd>Cmd+N</kbd> for
+                                        quick notes!
+                                    </p>
+                                    <button class="btn btn-primary" id="createFirstNote">Create Your First Note</button>
+                                </div>
+                                <% } %>
+            </div>
+        </div>
+
+        <!-- Note Editor Modal -->
+        <div id="noteEditor"
+            style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 1000; padding: 2rem;">
+            <div class="card" style="max-width: 600px; margin: 2rem auto; max-height: 80vh; overflow-y: auto;">
+                <h2 style="margin-bottom: 1.5rem;">✏️ <span id="editorTitle">New Note</span></h2>
+
+                <form id="noteForm">
+                    <div class="form-group">
+                        <label class="form-label">Title</label>
+                        <input type="text" id="noteTitle" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Content</label>
+                        <textarea id="noteContent" class="form-control" rows="8" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Tags (comma-separated)</label>
+                        <input type="text" id="noteTags" class="form-control" placeholder="study, important, exam">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Color</label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button type="button" onclick="setNoteColor('#FFD93D')"
+                                style="width: 40px; height: 40px; background: #FFD93D; border: 2px solid #ddd; border-radius: 4px; cursor: pointer;"></button>
+                            <button type="button" onclick="setNoteColor('#A8DADC')"
+                                style="width: 40px; height: 40px; background: #A8DADC; border: 2px solid #ddd; border-radius: 4px; cursor: pointer;"></button>
+                            <button type="button" onclick="setNoteColor('#F1FAEE')"
+                                style="width: 40px; height: 40px; background: #F1FAEE; border: 2px solid #ddd; border-radius: 4px; cursor: pointer;"></button>
+                            <button type="button" onclick="setNoteColor('#E63946')"
+                                style="width: 40px; height: 40px; background: #E63946; border: 2px solid #ddd; border-radius: 4px; cursor: pointer;"></button>
+                            <button type="button" onclick="setNoteColor('#457B9D')"
+                                style="width: 40px; height: 40px; background: #457B9D; border: 2px solid #ddd; border-radius: 4px; cursor: pointer;"></button>
+                        </div>
+                        <input type="hidden" id="noteColor" value="#FFD93D">
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        <button type="button" id="saveNote" class="btn btn-primary">💾 Save Note</button>
+                        <button type="button" id="cancelNote" class="btn btn-outline">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script src="/js/notes.js"></script>
+        <script>
+            function setNoteColor(color) {
+                document.getElementById('noteColor').value = color;
+                event.target.style.borderColor = 'var(--primary)';
+                event.target.style.borderWidth = '3px';
+            }
+
+            document.getElementById('createFirstNote')?.addEventListener('click', function () {
+                document.getElementById('noteEditor').style.display = 'block';
+            });
+        </script>
+    </body>
+
+    </html>

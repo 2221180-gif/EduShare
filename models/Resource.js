@@ -36,6 +36,11 @@ const resourceSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    price: {
+        type: Number,
+        default: 0,
+        min: 0
+    },
     views: {
         type: Number,
         default: 0

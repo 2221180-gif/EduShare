@@ -1,17 +1,115 @@
 <%- include('../partials/header') %>
+    <style>
+        .chat-container {
+            display: flex;
+            height: calc(100vh - 200px);
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .chat-sidebar {
+            width: 300px;
+            border-right: 1px solid #ddd;
+            background: #f8f9fa;
+            overflow-y: auto;
+        }
+
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #fff;
+        }
+
+        .chat-input {
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            gap: 10px;
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 10px 15px;
+            border-radius: 12px;
+            max-width: 70%;
+            word-wrap: break-word;
+            position: relative;
+            display: inline-block;
+        }
+
+        .message.sent {
+            background: #667eea;
+            color: white;
+            margin-left: auto;
+            display: block;
+            text-align: right;
+        }
+
+        .message.received {
+            background: #f1f1f1;
+            color: #333;
+        }
+
+        .message .delete-btn {
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
+            margin-left: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.2);
+            display: inline-block;
+        }
+
+        .message .delete-btn:hover {
+            background: rgba(255, 0, 0, 0.7);
+            color: white;
+        }
+
+        .user-item {
+            position: relative;
+            padding-left: 35px !important;
+        }
+
+        .online-indicator {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            background: #28a745;
+            border-radius: 50%;
+            border: 2px solid white;
+            display: none;
+        }
+
+        .user-item.online .online-indicator {
+            display: block;
+        }
+    </style>
+
     <div class="mb-2">
         <h1>Messages</h1>
     </div>
 
     <div class="chat-container">
         <div class="chat-sidebar">
-            <div style="padding: 15px; border-bottom: 1px solid #eee; font-weight: bold;">
-                Contacts
-            </div>
+            <div style="padding: 15px; border-bottom: 1px solid #eee; font-weight: bold;">Contacts</div>
             <ul style="list-style: none;">
                 <% users.forEach(u=> { %>
-                    <li style="padding: 15px; border-bottom: 1px solid #f5f5f5; cursor: pointer;"
+                    <li class="user-item" id="user-<%= u._id %>"
+                        style="padding: 15px; border-bottom: 1px solid #f5f5f5; cursor: pointer;"
                         onclick="selectUser('<%= u._id %>', '<%= u.username %>')">
+                        <span class="online-indicator"></span>
                         <%= u.username %>
                     </li>
                     <% }) %>
@@ -23,13 +121,9 @@
                 style="padding: 15px; border-bottom: 1px solid #eee; font-weight: bold; display: none;">
                 Chatting with <span id="chat-with-username"></span>
             </div>
-
             <div id="chat-messages" class="chat-messages">
-                <div style="text-align: center; color: #999; margin-top: 50px;">
-                    Select a user to start chatting
-                </div>
+                <div style="text-align: center; color: #999; margin-top: 50px;">Select a user to start chatting</div>
             </div>
-
             <div id="chat-input-area" class="chat-input" style="display: none;">
                 <input type="text" id="message-input" placeholder="Type a message..."
                     style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
@@ -48,30 +142,39 @@
 
                 socket.emit('join-user', currentUserId);
 
+                socket.on('online-users', (users) => {
+                    users.forEach(userId => {
+                        if (userId !== currentUserId) {
+                            document.getElementById(`user-${userId}`)?.classList.add('online');
+                        }
+                    });
+                });
+
+                socket.on('user-online', (userId) => {
+                    if (userId !== currentUserId) document.getElementById(`user-${userId}`)?.classList.add('online');
+                });
+
+                socket.on('user-offline', (userId) => {
+                    document.getElementById(`user-${userId}`)?.classList.remove('online');
+                });
+
                 socket.on('new-message', (message) => {
-                    if (message.conversationId === currentConversationId) {
-                        appendMessage(message);
-                    }
+                    if (message.conversationId === currentConversationId) appendMessage(message);
+                });
+
+                socket.on('message-deleted', (data) => {
+                    document.querySelector(`[data-message-id="${data.messageId}"]`)?.remove();
                 });
 
                 window.selectUser = async function (userId, username) {
                     try {
-                        console.log('Selecting user:', userId, username);
                         currentReceiverId = userId;
                         document.getElementById('chat-with-username').innerText = username;
                         document.getElementById('chat-header').style.display = 'block';
                         document.getElementById('chat-input-area').style.display = 'flex';
 
-                        // Fetch history
-                        console.log('Fetching conversation history...');
                         const res = await fetch(`/communication/history/${userId}`);
-
-                        if (!res.ok) {
-                            throw new Error(`HTTP error! status: ${res.status}`);
-                        }
-
                         const data = await res.json();
-                        console.log('Conversation data:', data);
 
                         currentConversationId = data.conversationId;
                         socket.emit('join-conversation', currentConversationId);
@@ -80,17 +183,15 @@
                         messagesDiv.innerHTML = '';
 
                         if (data.messages && data.messages.length > 0) {
-                            data.messages.forEach(msg => {
-                                appendMessage(msg);
-                            });
+                            data.messages.forEach(msg => appendMessage(msg));
                         } else {
                             messagesDiv.innerHTML = '<div style="text-align: center; color: #999; margin-top: 50px;">No messages yet. Start the conversation!</div>';
                         }
 
                         messagesDiv.scrollTop = messagesDiv.scrollHeight;
                     } catch (error) {
-                        console.error('Error selecting user:', error);
-                        alert('Error loading conversation: ' + error.message);
+                        console.error('Error:', error);
+                        alert('Error loading conversation');
                     }
                 };
 
@@ -109,13 +210,46 @@
                     input.value = '';
                 };
 
+                window.deleteMessage = async function (messageId) {
+                    if (!confirm('Delete this message?')) return;
+
+                    try {
+                        const res = await fetch(`/communication/message/${messageId}/delete`, { method: 'POST' });
+                        if (res.ok) {
+                            socket.emit('delete-message', { messageId, conversationId: currentConversationId });
+                        } else {
+                            alert('Failed to delete');
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        alert('Failed to delete message');
+                    }
+                };
+
                 function appendMessage(msg) {
                     const div = document.createElement('div');
                     const isMe = msg.sender._id === currentUserId || msg.sender === currentUserId;
                     div.className = `message ${isMe ? 'sent' : 'received'}`;
-                    div.innerText = msg.content;
+                    if (msg._id) div.setAttribute('data-message-id', msg._id);
+
+                    const textSpan = document.createElement('span');
+                    textSpan.innerText = msg.content;
+                    div.appendChild(textSpan);
+
+                    if (isMe && msg._id) {
+                        const deleteBtn = document.createElement('span');
+                        deleteBtn.className = 'delete-btn';
+                        deleteBtn.innerText = '×';
+                        deleteBtn.onclick = () => deleteMessage(msg._id);
+                        div.appendChild(deleteBtn);
+                    }
+
                     document.getElementById('chat-messages').appendChild(div);
                     document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
                 }
+
+                document.getElementById('message-input').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') sendMessage();
+                });
             });
         </script>

@@ -1,79 +1,383 @@
 <%- include('../partials/header') %>
-    <div class="hero">
-        <h1>🎓 Welcome to EduShare Connect</h1>
-        <p>The ultimate platform for peer-to-peer learning and resource sharing. Connect, learn, and grow together.</p>
-        <% if (typeof user==='undefined' || !user) { %>
-            <div class="mt-2">
-                <a href="/register" class="btn">Get Started Free</a>
-                <a href="/login" class="btn btn-secondary">Sign In</a>
+
+    <style>
+        .hero-section {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .floating-emoji {
+            position: absolute;
+            font-size: 3rem;
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(10deg);
+            }
+        }
+
+        .floating-emoji:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-emoji:nth-child(2) {
+            top: 20%;
+            right: 15%;
+            animation-delay: 1s;
+        }
+
+        .floating-emoji:nth-child(3) {
+            bottom: 15%;
+            left: 20%;
+            animation-delay: 2s;
+        }
+
+        .floating-emoji:nth-child(4) {
+            bottom: 25%;
+            right: 10%;
+            animation-delay: 3s;
+        }
+
+        .floating-emoji:nth-child(5) {
+            top: 50%;
+            left: 5%;
+            animation-delay: 1.5s;
+        }
+
+        .floating-emoji:nth-child(6) {
+            top: 60%;
+            right: 5%;
+            animation-delay: 2.5s;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero-content p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-hero {
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-primary-hero {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary-hero:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-secondary-hero {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary-hero:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .features-section {
+            padding: 4rem 2rem;
+            background: #f8f9fa;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .stats-section {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            max-width: 1000px;
+            margin: 2rem auto 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-content p {
+                font-size: 1.1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .btn-hero {
+                width: 100%;
+            }
+        }
+    </style>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="floating-emoji">📚</div>
+        <div class="floating-emoji">🎓</div>
+        <div class="floating-emoji">✏️</div>
+        <div class="floating-emoji">💡</div>
+        <div class="floating-emoji">🚀</div>
+        <div class="floating-emoji">🌟</div>
+
+        <div class="hero-content">
+            <h1>Welcome to EduShare Connect</h1>
+            <p>Your interactive peer-to-peer educational platform. Share knowledge, learn together, and grow your skills
+                with a vibrant community of learners.</p>
+            <div class="cta-buttons">
+                <% if (user) { %>
+                    <a href="/resources" class="btn-hero btn-primary-hero">Explore Resources</a>
+                    <a href="/courses" class="btn-hero btn-secondary-hero">Browse Courses</a>
+                    <% } else { %>
+                        <a href="/register" class="btn-hero btn-primary-hero">Get Started Free</a>
+                        <a href="/resources" class="btn-hero btn-secondary-hero">Explore Resources</a>
+                        <% } %>
             </div>
-            <% } else { %>
-                <div class="mt-2">
-                    <a href="/resources/upload/new" class="btn">Upload Resource</a>
-                    <a href="/resources" class="btn btn-secondary">Browse Resources</a>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="features-section">
+        <div class="container">
+            <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 3rem; color: #333;">
+                Everything You Need to Excel
+            </h2>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📖</div>
+                    <h3>Rich Resources</h3>
+                    <p>Access thousands of educational materials including PDFs, videos, and presentations shared by
+                        educators worldwide.</p>
                 </div>
-                <% } %>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎓</div>
+                    <h3>Structured Courses</h3>
+                    <p>Follow expertly designed courses with progress tracking, quizzes, and certificates upon
+                        completion.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>Community Forums</h3>
+                    <p>Engage in discussions, ask questions, and help others learn through our vibrant community forums.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI Assistant</h3>
+                    <p>Get instant help with your studies using our intelligent AI tutor available 24/7.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🏆</div>
+                    <h3>Gamification</h3>
+                    <p>Earn points, unlock badges, and compete on leaderboards as you progress through your learning
+                        journey.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h3>Smart Notes</h3>
+                    <p>Take notes with video timestamps, organize with tags, and export for offline study.</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="features grid">
-        <div class="card">
-            <i class="fas fa-book-open fa-3x"></i>
-            <h3>Share Resources</h3>
-            <p>Upload and download study materials, notes, past papers, and more. Build your knowledge library together.
-            </p>
-        </div>
-        <div class="card">
-            <i class="fas fa-comments fa-3x"></i>
-            <h3>Connect with Peers</h3>
-            <p>Chat with other students and teachers in real-time. Get instant help and collaborate seamlessly.</p>
-        </div>
-        <div class="card">
-            <i class="fas fa-star fa-3x"></i>
-            <h3>Premium Content</h3>
-            <p>Access verified, high-quality educational content curated by experts. Level up your learning.</p>
-        </div>
-        <div class="card">
-            <i class="fas fa-robot fa-3x"></i>
-            <h3>AI Recommendations</h3>
-            <p>Get personalized resource suggestions powered by smart algorithms tailored to your interests.</p>
-        </div>
-        <div class="card">
-            <i class="fas fa-search fa-3x"></i>
-            <h3>Smart Search</h3>
-            <p>Find exactly what you need with powerful filters by subject, grade level, and content type.</p>
-        </div>
-        <div class="card">
-            <i class="fas fa-shield-alt fa-3x"></i>
-            <h3>Secure & Safe</h3>
-            <p>Your data is protected with enterprise-grade security. Learn with peace of mind.</p>
+    <!-- Stats Section -->
+    <div class="stats-section">
+        <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Join Our Growing Community</h2>
+        <p style="font-size: 1.2rem; opacity: 0.9; margin-bottom: 2rem;">Real-time platform statistics</p>
+
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-number">
+                    <%= stats.users %>
+                </div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">
+                    <%= stats.resources %>
+                </div>
+                <div class="stat-label">Resources</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">
+                    <%= stats.courses %>
+                </div>
+                <div class="stat-label">Courses</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">AI Support</div>
+            </div>
         </div>
     </div>
 
-    <% if (user) { %>
-        <div style="margin-top: 60px;">
-            <h2 style="text-align: center; margin-bottom: 40px; font-size: 2.5rem; font-weight: 700;">Quick Actions</h2>
-            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
-                <a href="/resources" class="card" style="text-decoration: none; text-align: center;">
-                    <i class="fas fa-book fa-2x" style="color: var(--primary-color); margin-bottom: 15px;"></i>
-                    <h3>Browse Resources</h3>
-                    <p>Explore educational materials</p>
+    <!-- Quick Links Section -->
+    <div class="features-section">
+        <div class="container">
+            <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 3rem; color: #333;">
+                Quick Access
+            </h2>
+
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; max-width: 1000px; margin: 0 auto;">
+                <a href="/resources"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem; border-radius: 15px; color: white; text-decoration: none; text-align: center; transition: transform 0.3s;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📖</div>
+                    <h3 style="margin-bottom: 0.5rem;">Resources</h3>
+                    <p style="opacity: 0.9; font-size: 0.95rem;">Browse learning materials</p>
                 </a>
-                <a href="/communication" class="card" style="text-decoration: none; text-align: center;">
-                    <i class="fas fa-comments fa-2x" style="color: var(--primary-color); margin-bottom: 15px;"></i>
-                    <h3>Messages</h3>
-                    <p>Chat with your peers</p>
+
+                <a href="/courses"
+                    style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 2rem; border-radius: 15px; color: white; text-decoration: none; text-align: center; transition: transform 0.3s;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🎓</div>
+                    <h3 style="margin-bottom: 0.5rem;">Courses</h3>
+                    <p style="opacity: 0.9; font-size: 0.95rem;">Enroll in structured learning</p>
                 </a>
-                <a href="/ai/recommendations" class="card" style="text-decoration: none; text-align: center;">
-                    <i class="fas fa-magic fa-2x" style="color: var(--primary-color); margin-bottom: 15px;"></i>
-                    <h3>AI Picks</h3>
-                    <p>Personalized for you</p>
+
+                <a href="/forums"
+                    style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 2rem; border-radius: 15px; color: white; text-decoration: none; text-align: center; transition: transform 0.3s;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">💬</div>
+                    <h3 style="margin-bottom: 0.5rem;">Forums</h3>
+                    <p style="opacity: 0.9; font-size: 0.95rem;">Join discussions</p>
                 </a>
-                <a href="/premium" class="card" style="text-decoration: none; text-align: center;">
-                    <i class="fas fa-crown fa-2x" style="color: gold; margin-bottom: 15px;"></i>
-                    <h3>Premium</h3>
-                    <p>Exclusive content</p>
+
+                <a href="/reels"
+                    style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); padding: 2rem; border-radius: 15px; color: white; text-decoration: none; text-align: center; transition: transform 0.3s;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🎬</div>
+                    <h3 style="margin-bottom: 0.5rem;">Reels</h3>
+                    <p style="opacity: 0.9; font-size: 0.95rem;">Watch short videos</p>
                 </a>
             </div>
         </div>
-        <% } %>
-            <%- include('../partials/footer') %>
+    </div>
+
+    <script>
+        // Add hover effect to quick links
+        document.querySelectorAll('a[href^="/"]').forEach(link => {
+            if (link.style.background.includes('gradient')) {
+                link.addEventListener('mouseenter', function () {
+                    this.style.transform = 'translateY(-5px)';
+                });
+                link.addEventListener('mouseleave', function () {
+                    this.style.transform = 'translateY(0)';
+                });
+            }
+        });
+    </script>
+
+    <%- include('../partials/footer') %>

@@ -46,6 +46,11 @@ app.set('views', path.join(__dirname, 'views'));
 // Routes
 app.use('/', require('./routes/auth'));
 app.use('/resources', require('./routes/resources'));
+app.use('/reviews', require('./routes/reviews'));
+app.use('/courses', require('./routes/courses'));
+app.use('/favorites', require('./routes/favorites'));
+app.use('/notes', require('./routes/notes'));
+app.use('/forums', require('./routes/forums'));
 app.use('/communication', require('./routes/communication'));
 app.use('/premium', require('./routes/premium'));
 app.use('/ai', require('./routes/ai'));
@@ -55,18 +60,51 @@ app.use('/portal', require('./routes/portal'));
 app.use('/reels', require('./routes/reels'));
 
 
-// Home Route
-app.get('/', (req, res) => {
-    res.render('pages/index', {
-        user: req.session.user,
-        title: 'EduShare Connect - Home'
-    });
+// Home Route - with real-time stats
+app.get('/', async (req, res) => {
+    try {
+        const User = require('./models/User');
+        const Resource = require('./models/Resource');
+        const Course = require('./models/Course');
+
+        // Fetch real counts from database
+        const [userCount, resourceCount, courseCount] = await Promise.all([
+            User.countDocuments(),
+            Resource.countDocuments(),
+            Course.countDocuments()
+        ]);
+
+        res.render('pages/index', {
+            user: req.session.user,
+            title: 'EduShare Connect - Home',
+            stats: {
+                users: userCount,
+                resources: resourceCount,
+                courses: courseCount
+            }
+        });
+    } catch (error) {
+        console.error('Home page error:', error);
+        // Fallback to rendering without stats
+        res.render('pages/index', {
+            user: req.session.user,
+            title: 'EduShare Connect - Home',
+            stats: {
+                users: 0,
+                resources: 0,
+                courses: 0
+            }
+        });
+    }
 });
 
 // Test route to verify server is working
 app.get('/health', (req, res) => {
     res.json({ status: 'OK', message: 'EduShare Connect server is running' });
 });
+
+// Track online users
+const onlineUsers = new Map(); // userId -> socketId
 
 // Socket.io connection handling
 io.on('connection', (socket) => {
@@ -75,7 +113,15 @@ io.on('connection', (socket) => {
     // Join user's personal room
     socket.on('join-user', (userId) => {
         socket.join(`user_${userId}`);
-        console.log(`User ${userId} joined their room`);
+        socket.userId = userId;
+        onlineUsers.set(userId, socket.id);
+        console.log(`User ${userId} joined their room and is now online`);
+
+        // Broadcast online status to all users
+        io.emit('user-online', userId);
+
+        // Send list of all online users to the newly connected user
+        socket.emit('online-users', Array.from(onlineUsers.keys()));
     });
 
     // Join conversation
@@ -134,8 +180,35 @@ io.on('connection', (socket) => {
         });
     });
 
+    // Handle message deletion
+    socket.on('delete-message', async (data) => {
+        try {
+            const { messageId, conversationId } = data;
+            const Message = require('./models/Message');
+
+            // Find and delete the message
+            const message = await Message.findById(messageId);
+
+            if (message && message.sender.toString() === socket.userId) {
+                await Message.findByIdAndDelete(messageId);
+
+                // Notify both users in the conversation
+                io.to(conversationId).emit('message-deleted', { messageId });
+            }
+        } catch (error) {
+            console.error('Delete message error:', error);
+        }
+    });
+
     socket.on('disconnect', () => {
         console.log('User disconnected:', socket.id);
+
+        // Remove from online users and broadcast offline status
+        if (socket.userId) {
+            onlineUsers.delete(socket.userId);
+            io.emit('user-offline', socket.userId);
+            console.log(`User ${socket.userId} is now offline`);
+        }
     });
 });
 

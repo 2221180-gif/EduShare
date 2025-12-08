@@ -1,0 +1,179 @@
+<% const pageTitle='Courses - EduShare Connect' ; const currentUser=user; %>
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            <%= pageTitle %>
+        </title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" href="/css/design-system.css">
+        <link rel="stylesheet" href="/css/components.css">
+        <link rel="stylesheet" href="/css/style.css">
+    </head>
+
+    <body>
+
+        <!-- Hero Section -->
+        <div
+            style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; padding: 3rem 0 4rem; margin-bottom: 2rem;">
+            <div class="container">
+                <h1 style="color: white; margin-bottom: 1rem; font-size: 2.5rem;">🎓 Discover Courses</h1>
+                <p style="font-size: 1.125rem; opacity: 0.9;">Structured learning paths to master new skills</p>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Search & Filters -->
+            <div class="search-container">
+                <form action="/courses" method="GET" id="searchForm">
+                    <div class="search-input-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" name="search" class="search-input" placeholder="Search courses..."
+                            value="<%= search || '' %>">
+                    </div>
+                </form>
+            </div>
+
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label>Category</label>
+                    <select name="category" class="form-select">
+                        <option value="all">All Categories</option>
+                        <option value="Programming" <%=category==='Programming' ? 'selected' : '' %>>Programming
+                        </option>
+                        <option value="Design" <%=category==='Design' ? 'selected' : '' %>>Design</option>
+                        <option value="Business" <%=category==='Business' ? 'selected' : '' %>>Business</option>
+                        <option value="Science" <%=category==='Science' ? 'selected' : '' %>>Science</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Difficulty</label>
+                    <select name="difficulty" class="form-select">
+                        <option value="all">All Levels</option>
+                        <option value="beginner" <%=difficulty==='beginner' ? 'selected' : '' %>>Beginner</option>
+                        <option value="intermediate" <%=difficulty==='intermediate' ? 'selected' : '' %>>Intermediate
+                        </option>
+                        <option value="advanced" <%=difficulty==='advanced' ? 'selected' : '' %>>Advanced</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Sort By</label>
+                    <select name="sort" class="form-select">
+                        <option value="newest" <%=sort==='newest' ? 'selected' : '' %>>Newest</option>
+                        <option value="popular" <%=sort==='popular' ? 'selected' : '' %>>Most Popular</option>
+                        <option value="rating" <%=sort==='rating' ? 'selected' : '' %>>Highest Rated</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div style="margin: 2rem 0 1rem;">
+                <p style="color: var(--text-secondary);">
+                    <strong>
+                        <%= courses.length %>
+                    </strong> course<%= courses.length !==1 ? 's' : '' %> available
+                </p>
+            </div>
+
+            <!-- Courses Grid -->
+            <div class="resource-grid">
+                <% if (courses.length> 0) { %>
+                    <% courses.forEach(course=> { %>
+                        <div class="resource-card">
+                            <div class="resource-card-image"
+                                style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); display: flex; align-items: center; justify-content: center; font-size: 3rem;">
+                                🎓
+                            </div>
+
+                            <div class="resource-card-content">
+                                <div class="resource-card-header">
+                                    <h3 class="resource-card-title">
+                                        <%= course.title %>
+                                    </h3>
+                                    <% if (currentUser) { %>
+                                        <button class="btn-small" data-favorite-btn data-favorite-type="course"
+                                            data-favorite-id="<%= course._id %>"
+                                            style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">
+                                            🤍
+                                        </button>
+                                        <% } %>
+                                </div>
+
+                                <% if (course.averageRating && course.averageRating> 0) { %>
+                                    <div class="rating-display" style="margin-bottom: 0.5rem;">
+                                        <span class="stars">
+                                            <% for(let i=1; i <=5; i++) { %>
+                                                <%= i <=Math.round(course.averageRating) ? '★' : '☆' %>
+                                                    <% } %>
+                                        </span>
+                                        <span style="font-size: 0.875rem; color: var(--text-tertiary);">
+                                            <%= course.averageRating %>
+                                        </span>
+                                    </div>
+                                    <% } %>
+
+                                        <p
+                                            style="margin-bottom: 0.5rem; color: var(--text-tertiary); font-size: 0.875rem;">
+                                            By <%= course.instructor ? course.instructor.username : 'Unknown' %>
+                                        </p>
+
+                                        <p class="resource-description">
+                                            <%= course.description %>
+                                        </p>
+
+                                        <div class="resource-meta">
+                                            <span class="badge badge-primary">
+                                                <%= course.category || course.subject %>
+                                            </span>
+                                            <span
+                                                class="badge <%= course.difficulty === 'beginner' ? 'badge-success' : course.difficulty === 'intermediate' ? 'badge-warning' : 'badge-danger' %>">
+                                                <%= course.difficulty %>
+                                            </span>
+                                            <% if (course.isPremium) { %>
+                                                <span class="premium-badge">$<%= course.price || 0 %></span>
+                                                <% } else { %>
+                                                    <span class="badge badge-info">Free</span>
+                                                    <% } %>
+                                        </div>
+
+                                        <div class="resource-footer">
+                                            <div class="resource-stats">
+                                                <span class="resource-stat">👥 <%= course.enrollmentCount || 0 %></span>
+                                                <span class="resource-stat">📚 <%= course.totalLessons ||
+                                                        course.chapters?.reduce((sum, ch)=> sum + ch.lessons.length, 0)
+                                                        || 0 %> lessons</span>
+                                            </div>
+                                            <a href="/courses/<%= course._id %>" class="btn btn-primary btn-sm">View
+                                                Course →</a>
+                                        </div>
+                            </div>
+                        </div>
+                        <% }) %>
+                            <% } else { %>
+                                <div style="grid-column: 1/-1; text-align: center; padding: 4rem 2rem;">
+                                    <div style="font-size: 4rem; margin-bottom: 1rem;">📚</div>
+                                    <h3>No courses available yet</h3>
+                                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                                        Check back soon for new courses!
+                                    </p>
+                                    <% if (currentUser && (currentUser.role==='teacher' || currentUser.role==='admin' ))
+                                        { %>
+                                        <a href="/courses/create" class="btn btn-primary">Create a Course</a>
+                                        <% } %>
+                                </div>
+                                <% } %>
+            </div>
+        </div>
+
+        <script src="/js/favorites.js"></script>
+    </body>
+
+    </html>

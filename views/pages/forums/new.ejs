@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Discussion - Forums - EduShare Connect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/design-system.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1F2937;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #D1D5DB;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #4F46E5;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: #4F46E5;
+            color: white;
+        }
+
+        .btn-outline {
+            background: white;
+            color: #6B7280;
+            border: 2px solid #D1D5DB;
+        }
+    </style>
+</head>
+
+<body style="background: #F3F4F6; font-family: 'Inter', sans-serif;">
+
+    <div class="container" style="max-width: 800px; margin: 2rem auto; padding: 0 1rem;">
+        <div style="margin-bottom: 1.5rem;">
+            <a href="/forums" style="color: #6B7280; text-decoration: none;">← Back to Forums</a>
+        </div>
+
+        <div style="background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <h1 style="color: #1F2937; margin-bottom: 2rem; font-size: 2rem;">✏️ Start a New Discussion</h1>
+
+            <form action="/forums" method="POST">
+                <div class="form-group">
+                    <label class="form-label" for="title">Discussion Title*</label>
+                    <input type="text" id="title" name="title" class="form-control"
+                        placeholder="What would you like to discuss?" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="category">Category*</label>
+                    <select id="category" name="category" class="form-control" required>
+                        <option value="general">💬 General Discussion</option>
+                        <option value="question">❓ Question</option>
+                        <option value="discussion">💭 Discussion</option>
+                        <option value="announcement">📢 Announcement</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="content">Content*</label>
+                    <textarea id="content" name="content" class="form-control" rows="10"
+                        placeholder="Provide details about your topic..." required style="resize: vertical;"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="tags">Tags (optional)</label>
+                    <input type="text" id="tags" name="tags" class="form-control"
+                        placeholder="study, exam, help (comma-separated)">
+                    <small style="color: #6B7280; font-size: 0.875rem;">Add tags to help others find your
+                        discussion</small>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary">
+                        ✨ Create Discussion
+                    </button>
+                    <a href="/forums" class="btn btn-outline">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>

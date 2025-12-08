@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= thread.title %> - Forums - EduShare Connect
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/design-system.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .thread-container {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .vote-btn {
+            background: #F3F4F6;
+            border: 2px solid #D1D5DB;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .vote-btn:hover {
+            background: #4F46E5;
+            color: white;
+            border-color: #4F46E5;
+        }
+
+        .reply-box {
+            background: #F9FAFB;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #D1D5DB;
+        }
+
+        .reply-box.answer {
+            border-left-color: #10B981;
+            background: #ECFDF5;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-success {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .badge-warning {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #4F46E5;
+            color: white;
+        }
+
+        .btn-outline {
+            background: white;
+            color: #4F46E5;
+            border: 2px solid #4F46E5;
+        }
+    </style>
+</head>
+
+<body style="background: #F3F4F6; font-family: 'Inter', sans-serif;">
+
+    <input type="hidden" id="threadId" value="<%= thread._id %>">
+
+    <!-- Breadcrumb -->
+    <div class="container" style="max-width: 1000px; margin: 2rem auto; padding: 0 1rem;">
+        <div style="margin-bottom: 1.5rem;">
+            <a href="/forums" style="color: #6B7280; text-decoration: none;">← Back to Forums</a>
+        </div>
+
+        <!-- Thread Header -->
+        <div class="thread-container">
+            <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="text-align: center;">
+                    <button class="vote-btn" onclick="voteThread('<%= thread._id %>', 'up')">
+                        ▲ <span id="upvotes">
+                            <%= thread.votes.up.length %>
+                        </span>
+                    </button>
+                    <div style="font-size: 1.25rem; font-weight: 700; margin: 0.5rem 0;" id="score">
+                        <%= thread.votes.up.length - thread.votes.down.length %>
+                    </div>
+                    <button class="vote-btn" onclick="voteThread('<%= thread._id %>', 'down')">
+                        ▼ <span id="downvotes">
+                            <%= thread.votes.down.length %>
+                        </span>
+                    </button>
+                </div>
+
+                <div style="flex: 1;">
+                    <div style="margin-bottom: 1rem;">
+                        <% if (thread.isPinned) { %>
+                            <span class="badge badge-warning">📌 Pinned</span>
+                            <% } %>
+                                <% if (thread.isLocked) { %>
+                                    <span class="badge" style="background: #FEE2E2; color: #991B1B;">🔒 Locked</span>
+                                    <% } %>
+                                        <span class="badge" style="background: #DBEAFE; color: #1E40AF;">
+                                            <%= thread.category %>
+                                        </span>
+                    </div>
+
+                    <h1 style="color: #1F2937; margin-bottom: 1rem; font-size: 2rem;">
+                        <%= thread.title %>
+                    </h1>
+
+                    <div style="display: flex; gap: 1.5rem; color: #6B7280; font-size: 0.875rem; margin-bottom: 1rem;">
+                        <span>👤 <%= thread.author ? thread.author.username : 'Unknown' %></span>
+                        <span>📅 <%= new Date(thread.createdAt).toLocaleDateString() %></span>
+                        <span>👁️ <%= thread.views %> views</span>
+                        <span>💬 <%= thread.replies.length %> replies</span>
+                    </div>
+
+                    <% if (thread.tags && thread.tags.length> 0) { %>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                            <% thread.tags.forEach(tag=> { %>
+                                <span class="badge" style="background: #E0E7FF; color: #3730A3;">🏷️ <%= tag %></span>
+                                <% }) %>
+                        </div>
+                        <% } %>
+
+                            <div style="color: #374151; line-height: 1.7; white-space: pre-wrap;">
+                                <%= thread.content %>
+                            </div>
+
+                            <% if (user && (user.id===thread.author._id.toString() || user.role==='admin' )) { %>
+                                <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #E5E7EB;">
+                                    <button onclick="deleteThread('<%= thread._id %>')" class="btn-outline"
+                                        style="padding: 0.5rem 1rem; color: #DC2626; border-color: #DC2626;">
+                                        🗑️ Delete Thread
+                                    </button>
+                                </div>
+                                <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Replies -->
+        <div id="repliesContainer">
+            <h2 style="color: #1F2937; margin-bottom: 1.5rem; font-size: 1.5rem;">
+                💬 <%= thread.replies.length %>
+                    <%= thread.replies.length===1 ? 'Reply' : 'Replies' %>
+            </h2>
+
+            <% if (thread.replies.length> 0) { %>
+                <% thread.replies.forEach((reply, index)=> { %>
+                    <div class="reply-box <%= reply.isAnswer ? 'answer' : '' %>">
+                        <div style="display: flex; gap: 1rem;">
+                            <div style="text-align: center;">
+                                <button class="vote-btn" onclick="voteReply('<%= reply._id %>', 'up')"
+                                    style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">
+                                    ▲ <span id="upvotes-<%= reply._id %>">
+                                        <%= reply.votes.up.length %>
+                                    </span>
+                                </button>
+                                <div style="font-size: 1rem; font-weight: 600; margin: 0.25rem 0;">
+                                    <%= reply.votes.up.length - reply.votes.down.length %>
+                                </div>
+                                <button class="vote-btn" onclick="voteReply('<%= reply._id %>', 'down')"
+                                    style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">
+                                    ▼ <span id="downvotes-<%= reply._id %>">
+                                        <%= reply.votes.down.length %>
+                                    </span>
+                                </button>
+                            </div>
+
+                            <div style="flex: 1;">
+                                <div
+                                    style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                                    <div style="display: flex; gap: 1rem; align-items: center;">
+                                        <img src="<%= reply.author.profile?.avatar || '/images/default-avatar.png' %>"
+                                            alt="<%= reply.author.username %>"
+                                            style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                                        <div>
+                                            <div style="font-weight: 600; color: #1F2937;">
+                                                <%= reply.author.username %>
+                                            </div>
+                                            <div style="font-size: 0.875rem; color: #6B7280;">
+                                                <%= new Date(reply.createdAt).toLocaleDateString() %>
+                                            </div>
+                                        </div>
+                                        <% if (reply.isAnswer) { %>
+                                            <span class="badge badge-success">✓ Accepted Answer</span>
+                                            <% } %>
+                                    </div>
+
+                                    <% if (user && (user.id===thread.author._id.toString() || user.role==='admin' ) &&
+                                        !reply.isAnswer) { %>
+                                        <button onclick="markAsAnswer('<%= reply._id %>')" class="btn-outline"
+                                            style="padding: 0.5rem 1rem; font-size: 0.875rem; color: #10B981; border-color: #10B981;">
+                                            ✓ Mark as Answer
+                                        </button>
+                                        <% } %>
+                                </div>
+
+                                <div style="color: #374151; line-height: 1.7; white-space: pre-wrap;">
+                                    <%= reply.content %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% }) %>
+                        <% } %>
+        </div>
+
+        <!-- Reply Form -->
+        <% if (user) { %>
+            <% if (!thread.isLocked) { %>
+                <div class="thread-container" style="margin-top: 2rem;">
+                    <h3 style="color: #1F2937; margin-bottom: 1rem;">Add Your Reply</h3>
+                    <form id="replyForm" data-thread-id="<%= thread._id %>">
+                        <textarea id="replyContent" placeholder="Share your thoughts..." required
+                            style="width: 100%; min-height: 150px; padding: 1rem; border: 2px solid #D1D5DB; border-radius: 8px; font-family: inherit; font-size: 1rem; resize: vertical;"></textarea>
+
+                        <% if (user.id===thread.author._id.toString() || user.role==='admin' ) { %>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; margin: 1rem 0;">
+                                <input type="checkbox" id="markAsAnswer">
+                                <span>Mark this as the accepted answer</span>
+                            </label>
+                            <% } %>
+
+                                <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
+                                    💬 Post Reply
+                                </button>
+                    </form>
+                </div>
+                <% } else { %>
+                    <div class="thread-container" style="text-align: center; padding: 2rem;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔒</div>
+                        <p style="color: #6B7280;">This thread is locked. No new replies can be added.</p>
+                    </div>
+                    <% } %>
+                        <% } else { %>
+                            <div class="thread-container" style="text-align: center; padding: 2rem;">
+                                <p style="color: #6B7280; margin-bottom: 1rem;">Please log in to reply to this thread.
+                                </p>
+                                <a href="/login" class="btn btn-primary">Login</a>
+                            </div>
+                            <% } %>
+    </div>
+
+    <script src="/js/forums.js"></script>
+</body>
+
+</html>

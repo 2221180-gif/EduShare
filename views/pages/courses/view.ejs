@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= course.title %> - EduShare Connect
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/design-system.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .hero-course {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+            padding: 3rem 0;
+        }
+
+        .course-sidebar {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 2rem;
+        }
+
+        .lesson-item {
+            padding: 0.75rem;
+            background: #F9FAFB;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+        }
+
+        .lesson-item:hover {
+            background: #F3F4F6;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #10B981;
+            color: white;
+        }
+
+        .btn-lg {
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+        }
+    </style>
+</head>
+
+<body style="background: #F3F4F6; font-family: 'Inter', sans-serif;">
+
+    <!-- Hero -->
+    <div class="hero-course">
+        <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 1rem;">
+            <div style="margin-bottom: 1rem;">
+                <a href="/courses" style="color: white; opacity: 0.9; text-decoration: none;">← Back to Courses</a>
+            </div>
+            <h1 style="color: white; font-size: 2.5rem; margin-bottom: 1rem;">
+                <%= course.title %>
+            </h1>
+            <p style="font-size: 1.125rem; opacity: 0.9; max-width: 800px;">
+                <%= course.description %>
+            </p>
+        </div>
+    </div>
+
+    <div class="container" style="max-width: 1200px; margin: 2rem auto; padding: 0 1rem;">
+        <div style="display: grid; grid-template-columns: 1fr 350px; gap: 2rem;">
+            <!-- Main Content -->
+            <div>
+                <!-- Course Info -->
+                <div
+                    style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                        <span class="badge" style="background: #DBEAFE; color: #1E40AF;">
+                            <%= course.category || course.subject %>
+                        </span>
+                        <span class="badge"
+                            style="background: <%= course.difficulty === 'beginner' ? '#D1FAE5' : course.difficulty === 'intermediate' ? '#FEF3C7' : '#FEE2E2' %>; color: <%= course.difficulty === 'beginner' ? '#065F46' : course.difficulty === 'intermediate' ? '#92400E' : '#991B1B' %>;">
+                            <%= course.difficulty %>
+                        </span>
+                        <% if (course.isPremium) { %>
+                            <span class="badge"
+                                style="background: linear-gradient(135deg, #F59E0B 0%, #DC2626 100%); color: white;">
+                                Premium - $<%= course.price %>
+                            </span>
+                            <% } else { %>
+                                <span class="badge" style="background: #D1FAE5; color: #065F46;">Free</span>
+                                <% } %>
+                    </div>
+
+                    <div
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div>
+                            <div style="color: #6B7280; font-size: 0.875rem;">Instructor</div>
+                            <div style="font-weight: 600; color: #1F2937;">
+                                <%= course.instructor ? course.instructor.username : 'Unknown' %>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="color: #6B7280; font-size: 0.875rem;">Duration</div>
+                            <div style="font-weight: 600; color: #1F2937;">
+                                <%= course.estimatedDuration || 'Self-paced' %>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="color: #6B7280; font-size: 0.875rem;">Enrolled</div>
+                            <div style="font-weight: 600; color: #1F2937;">
+                                <%= course.enrollmentCount || 0 %> students
+                            </div>
+                        </div>
+                        <div>
+                            <div style="color: #6B7280; font-size: 0.875rem;">Rating</div>
+                            <div style="font-weight: 600; color: #F59E0B;">
+                                <% if (course.averageRating) { %>
+                                    ⭐ <%= course.averageRating.toFixed(1) %>
+                                        <% } else { %>
+                                            Not rated yet
+                                            <% } %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <% if (userProgress) { %>
+                        <div
+                            style="background: #F0FDF4; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; border: 2px solid #10B981;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="font-weight: 600; color: #065F46;">Your Progress</span>
+                                <span style="font-weight: 600; color: #10B981;">
+                                    <%= userProgress.completionPercentage %>%
+                                </span>
+                            </div>
+                            <div style="background: #D1FAE5; height: 12px; border-radius: 20px; overflow: hidden;">
+                                <div
+                                    style="background: #10B981; height: 100%; width: <%= userProgress.completionPercentage %>%; transition: width 0.3s ease;">
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+
+                            <% if (!isEnrolled) { %>
+                                <form action="/courses/<%= course._id %>/enroll" method="POST">
+                                    <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                                        🎓 Enroll in This Course
+                                    </button>
+                                </form>
+                                <% } else { %>
+                                    <a href="/courses/<%= course._id %>/learn" class="btn btn-primary btn-lg"
+                                        style="width: 100%; text-align: center;">
+                                        📚 Continue Learning
+                                    </a>
+                                    <% } %>
+                </div>
+
+                <!-- Learning Objectives -->
+                <% if (course.learningObjectives && course.learningObjectives.length> 0) { %>
+                    <div
+                        style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <h2 style="color: #1F2937; margin-bottom: 1rem; font-size: 1.5rem;">🎯 What You'll Learn</h2>
+                        <ul style="list-style: none; padding: 0;">
+                            <% course.learningObjectives.forEach(objective=> { %>
+                                <li
+                                    style="padding: 0.75rem 0; border-bottom: 1px solid #E5E7EB; display: flex; gap: 0.75rem;">
+                                    <span style="color: #10B981;">✓</span>
+                                    <span style="color: #374151;">
+                                        <%= objective %>
+                                    </span>
+                                </li>
+                                <% }) %>
+                        </ul>
+                    </div>
+                    <% } %>
+
+                        <!-- Course Content -->
+                        <div
+                            style="background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <h2 style="color: #1F2937; margin-bottom: 1.5rem; font-size: 1.5rem;">📚 Course Content</h2>
+
+                            <% if (course.chapters && course.chapters.length> 0) { %>
+                                <% course.chapters.forEach((chapter, chapterIndex)=> { %>
+                                    <div style="margin-bottom: 1.5rem;">
+                                        <h3 style="color: #1F2937; margin-bottom: 0.75rem; font-size: 1.125rem;">
+                                            Chapter <%= chapterIndex + 1 %>: <%= chapter.title %>
+                                        </h3>
+                                        <% if (chapter.lessons && chapter.lessons.length> 0) { %>
+                                            <% chapter.lessons.forEach((lesson, lessonIndex)=> { %>
+                                                <div class="lesson-item">
+                                                    <div
+                                                        style="display: flex; justify-content: space-between; align-items: center;">
+                                                        <div style="display: flex; gap: 0.75rem; align-items: center;">
+                                                            <span>
+                                                                <%= lesson.type==='video' ? '🎥' :
+                                                                    lesson.type==='article' ? '📄' :
+                                                                    lesson.type==='quiz' ? '❓' : '📁' %>
+                                                            </span>
+                                                            <span style="color: #1F2937; font-weight: 500;">
+                                                                <%= lesson.title %>
+                                                            </span>
+                                                        </div>
+                                                        <div style="display: flex; gap: 1rem; align-items: center;">
+                                                            <% if (lesson.duration) { %>
+                                                                <span style="color: #6B7280; font-size: 0.875rem;">
+                                                                    <%= lesson.duration %>
+                                                                </span>
+                                                                <% } %>
+                                                                    <% if (lesson.isFree) { %>
+                                                                        <span class="badge"
+                                                                            style="background: #DBEAFE; color: #1E40AF;">Preview</span>
+                                                                        <% } %>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <% }) %>
+                                                    <% } %>
+                                    </div>
+                                    <% }) %>
+                                        <% } else { %>
+                                            <p style="color: #6B7280;">Course content will be available soon.</p>
+                                            <% } %>
+                        </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div>
+                <div class="course-sidebar">
+                    <h3 style="color: #1F2937; margin-bottom: 1rem;">Course Details</h3>
+
+                    <% if (course.prerequisites && course.prerequisites.length> 0) { %>
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="font-weight: 600; color: #1F2937; margin-bottom: 0.5rem;">Prerequisites</div>
+                            <ul style="margin: 0; padding-left: 1.25rem; color: #6B7280; font-size: 0.875rem;">
+                                <% course.prerequisites.forEach(prereq=> { %>
+                                    <li style="margin-bottom: 0.25rem;">
+                                        <%= prereq %>
+                                    </li>
+                                    <% }) %>
+                            </ul>
+                        </div>
+                        <% } %>
+
+                            <div style="margin-bottom: 1.5rem;">
+                                <div style="font-weight: 600; color: #1F2937; margin-bottom: 0.5rem;">Total Lessons
+                                </div>
+                                <div style="color: #6B7280;">
+                                    <%= course.totalLessons || (course.chapters?.reduce((sum, ch)=> sum +
+                                        ch.lessons.length, 0)) || 0 %> lessons
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: 1.5rem;">
+                                <div style="font-weight: 600; color: #1F2937; margin-bottom: 0.5rem;">Language</div>
+                                <div style="color: #6B7280;">English</div>
+                            </div>
+
+                            <% if (course.tags && course.tags.length> 0) { %>
+                                <div>
+                                    <div style="font-weight: 600; color: #1F2937; margin-bottom: 0.5rem;">Tags</div>
+                                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                        <% course.tags.forEach(tag=> { %>
+                                            <span class="badge" style="background: #F3F4F6; color: #6B7280;">
+                                                <%= tag %>
+                                            </span>
+                                            <% }) %>
+                                    </div>
+                                </div>
+                                <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/favorites.js"></script>
+</body>
+
+</html>

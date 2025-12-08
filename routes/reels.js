@@ -62,6 +62,13 @@ const educationalReels = [
         title: 'Memory Palace Technique - Remember Anything',
         category: 'Study Tips',
         thumbnail: 'https://img.youtube.com/vi/njVv7J2S9L4/maxresdefault.jpg'
+    },
+
+    {
+        id: 'njVv7J2S9L4',
+        title: 'Be that 1% ❤️‍🔥💯',
+        category: 'Study Tips',
+        thumbnail: 'https://img.youtube.com/vi/njVv7J2S9L4/maxresdefault.jpg'
     }
 ];
 

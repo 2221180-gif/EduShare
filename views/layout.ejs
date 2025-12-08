@@ -7,58 +7,135 @@
     <title>
         <%= typeof title !=='undefined' ? title : 'EduShare Connect' %>
     </title>
-    <link rel="stylesheet" href="/css/style.css?v=2">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/css/design-system.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/style.css?v=3">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
-    <div class="emoji-background">
-        <div class="floating-emoji">📚</div>
-        <div class="floating-emoji">🎓</div>
-        <div class="floating-emoji">✏️</div>
-        <div class="floating-emoji">💡</div>
-        <div class="floating-emoji">🔬</div>
-        <div class="floating-emoji">🎨</div>
-        <div class="floating-emoji">🚀</div>
-        <div class="floating-emoji">🧠</div>
-        <div class="floating-emoji">📝</div>
-        <div class="floating-emoji">🌏</div>
-    </div>
+    <!-- Navigation -->
     <nav class="navbar">
-        <div class="container">
-            <a href="/" class="logo">EduShare Connect</a>
-            <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/resources">Resources</a></li>
+        <div class="container navbar-container">
+            <a href="/" class="navbar-brand">📚 EduShare Connect</a>
+
+            <button class="navbar-toggle" id="navbarToggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <ul class="navbar-menu" id="navbarMenu">
+                <li class="navbar-item"><a href="/">🏠 Home</a></li>
+                <li class="navbar-item"><a href="/resources">📖 Resources</a></li>
+                <li class="navbar-item"><a href="/courses">🎓 Courses</a></li>
+                <li class="navbar-item"><a href="/forums">💬 Forums</a></li>
+                <li class="navbar-item"><a href="/reels">🎬 Reels</a></li>
+
                 <% if (user) { %>
-                    <li><a href="/communication">Chat</a></li>
-                    <li><a href="/premium">Premium</a></li>
-                    <li><a href="/ai/recommendations">AI Picks</a></li>
-                    <li><a href="/resources/upload/new">Upload</a></li>
-                    <li class="user-menu">
-                        <span>Welcome, <%= user.username %></span>
-                        <a href="/logout" class="btn-small">Logout</a>
-                    </li>
-                    <% } else { %>
-                        <li><a href="/login">Login</a></li>
-                        <li><a href="/register">Register</a></li>
+                    <li class="navbar-item"><a href="/favorites">❤️ Favorites</a></li>
+                    <li class="navbar-item"><a href="/notes">📝 Notes</a></li>
+                    <li class="navbar-item"><a href="/communication">✉️ Chat</a></li>
+                    <li class="navbar-item"><a href="/gamification/leaderboard">🏆 Leaderboard</a></li>
+                    <li class="navbar-item"><a href="/ai-assistant">🤖 AI Chat</a></li>
+
+                    <% if (user.role==='teacher' || user.role==='admin' ) { %>
+                        <li class="navbar-item"><a href="/resources/upload/new">⬆️ Upload</a></li>
                         <% } %>
+
+                            <li class="navbar-item">
+                                <div class="d-flex align-center gap-2">
+                                    <span>👤 <%= user.username %></span>
+                                    <a href="/logout" class="btn btn-sm btn-outline">Logout</a>
+                                </div>
+                            </li>
+                            <% } else { %>
+                                <li class="navbar-item"><a href="/login" class="btn btn-primary btn-sm">Login</a></li>
+                                <li class="navbar-item"><a href="/register"
+                                        class="btn btn-secondary btn-sm">Register</a></li>
+                                <% } %>
             </ul>
         </div>
     </nav>
 
-    <main class="container">
+    <!-- Main Content -->
+    <main class="container" style="padding-top: 2rem; padding-bottom: 2rem; min-height: 70vh;">
         <%- body %>
     </main>
 
-    <footer>
+    <!-- Footer -->
+    <footer style="background: var(--gray-900); color: var(--text-light); padding: 3rem 0; margin-top: 4rem;">
         <div class="container">
-            <p>&copy; 2024 EduShare Connect. All rights reserved.</p>
+            <div class="row">
+                <div class="col-4">
+                    <h3 style="color: var(--text-light); margin-bottom: 1rem;">📚 EduShare Connect</h3>
+                    <p style="color: var(--gray-400);">Interactive peer-to-peer educational platform for collaborative
+                        learning.</p>
+                </div>
+                <div class="col-4">
+                    <h4 style="color: var(--text-light); margin-bottom: 1rem;">Quick Links</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 0.5rem;"><a href="/resources"
+                                style="color: var(--gray-400); text-decoration: none;">Resources</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="/courses"
+                                style="color: var(--gray-400); text-decoration: none;">Courses</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="/forums"
+                                style="color: var(--gray-400); text-decoration: none;">Forums</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="/reels"
+                                style="color: var(--gray-400); text-decoration: none;">Educational Reels</a></li>
+                    </ul>
+                </div>
+                <div class="col-4">
+                    <h4 style="color: var(--text-light); margin-bottom: 1rem;">Community</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 0.5rem;"><a href="/gamification/leaderboard"
+                                style="color: var(--gray-400); text-decoration: none;">Leaderboard</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="/ai-assistant"
+                                style="color: var(--gray-400); text-decoration: none;">AI Assistant</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="/portal"
+                                style="color: var(--gray-400); text-decoration: none;">Student Portal</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--gray-800);">
+                <p style="color: var(--gray-500);">&copy; 2024 EduShare Connect. All rights reserved.</p>
+            </div>
         </div>
     </footer>
 
+    <!-- Scripts -->
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/main.js"></script>
+    <script src="/js/search.js"></script>
+    <script src="/js/reviews.js"></script>
+    <script src="/js/favorites.js"></script>
+    <script src="/js/notes.js"></script>
+    <script src="/js/forums.js"></script>
+    <script>
+        // Mobile navigation toggle
+        document.getElementById('navbarToggle')?.addEventListener('click', function () {
+            this.classList.toggle('active');
+            document.getElementById('navbarMenu')?.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function (e) {
+            const navbar = document.getElementById('navbarMenu');
+            const toggle = document.getElementById('navbarToggle');
+
+            if (navbar && toggle && !navbar.contains(e.target) && !toggle.contains(e.target)) {
+                navbar.classList.remove('active');
+                toggle.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 
 </html>

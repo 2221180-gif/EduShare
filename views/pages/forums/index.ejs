@@ -1,0 +1,209 @@
+<% const pageTitle='Discussion Forums - EduShare Connect' ; const currentUser=user; %>
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            <%= pageTitle %>
+        </title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" href="/css/design-system.css">
+        <link rel="stylesheet" href="/css/components.css">
+        <link rel="stylesheet" href="/css/style.css">
+        <style>
+            .forum-thread {
+                background: var(--bg-primary);
+                border-radius: var(--radius-lg);
+                padding: 1.5rem;
+                margin-bottom: 1rem;
+                box-shadow: var(--shadow-sm);
+                transition: all var(--transition-base);
+                border-left: 4px solid transparent;
+            }
+
+            .forum-thread:hover {
+                box-shadow: var(--shadow-md);
+                transform: translateX(4px);
+            }
+
+            .forum-thread.pinned {
+                border-left-color: var(--accent);
+                background: linear-gradient(to right, rgba(245, 158, 11, 0.05), transparent);
+            }
+
+            .forum-thread.locked {
+                opacity: 0.7;
+            }
+
+            .thread-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 1rem;
+            }
+
+            .thread-title {
+                font-size: 1.25rem;
+                font-weight: 700;
+                margin-bottom: 0.5rem;
+                color: var(--text-primary);
+            }
+
+            .thread-meta {
+                display: flex;
+                gap: 1rem;
+                flex-wrap: wrap;
+                font-size: 0.875rem;
+                color: var(--text-tertiary);
+                margin-bottom: 1rem;
+            }
+
+            .thread-stats {
+                display: flex;
+                gap: 1.5rem;
+                font-size: 0.875rem;
+                color: var(--text-secondary);
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <!-- Hero Section -->
+        <div
+            style="background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%); color: white; padding: 3rem 0 4rem; margin-bottom: 2rem;">
+            <div class="container">
+                <h1 style="color: white; margin-bottom: 1rem; font-size: 2.5rem;">💬 Discussion Forums</h1>
+                <p style="font-size: 1.125rem; opacity: 0.9;">Ask questions, share knowledge, and learn together</p>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Actions Bar -->
+            <div
+                style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; justify-content: space-between;">
+                <form action="/forums" method="GET" style="flex: 1; min-width: 300px;">
+                    <div class="search-input-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" name="search" class="search-input" placeholder="Search discussions..."
+                            value="<%= search || '' %>">
+                    </div>
+                </form>
+                <% if (currentUser) { %>
+                    <a href="/forums/new" class="btn btn-primary">✏️ New Discussion</a>
+                    <% } %>
+            </div>
+
+            <!-- Filters -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label>Category</label>
+                    <select name="category" class="form-select"
+                        onchange="window.location.href='/forums?category='+this.value">
+                        <option value="all" <%=category==='all' ? 'selected' : '' %>>All Categories</option>
+                        <option value="question" <%=category==='question' ? 'selected' : '' %>>❓ Questions</option>
+                        <option value="discussion" <%=category==='discussion' ? 'selected' : '' %>>💭 Discussions
+                        </option>
+                        <option value="announcement" <%=category==='announcement' ? 'selected' : '' %>>📢 Announcements
+                        </option>
+                        <option value="general" <%=category==='general' ? 'selected' : '' %>>💬 General</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Sort By</label>
+                    <select name="sort" class="form-select" onchange="window.location.href='/forums?sort='+this.value">
+                        <option value="recent" <%=sort==='recent' ? 'selected' : '' %>>Recent Activity</option>
+                        <option value="popular" <%=sort==='popular' ? 'selected' : '' %>>Most Viewed</option>
+                        <option value="votes" <%=sort==='votes' ? 'selected' : '' %>>Most Upvoted</option>
+                        <option value="unanswered" <%=sort==='unanswered' ? 'selected' : '' %>>Unanswered</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Threads List -->
+            <div style="margin-top: 2rem;">
+                <% if (threads.length> 0) { %>
+                    <% threads.forEach(thread=> { %>
+                        <div
+                            class="forum-thread <%= thread.isPinned ? 'pinned' : '' %> <%= thread.isLocked ? 'locked' : '' %>">
+                            <div class="thread-header">
+                                <div style="flex: 1;">
+                                    <% if (thread.isPinned) { %>
+                                        <span class="badge badge-warning">📌 Pinned</span>
+                                        <% } %>
+                                            <% if (thread.isLocked) { %>
+                                                <span class="badge badge-danger">🔒 Locked</span>
+                                                <% } %>
+                                                    <a href="/forums/<%= thread._id %>" style="text-decoration: none;">
+                                                        <h3 class="thread-title">
+                                                            <%= thread.title %>
+                                                        </h3>
+                                                    </a>
+                                                    <div class="thread-meta">
+                                                        <span>👤 <%= thread.author ? thread.author.username : 'Unknown'
+                                                                %></span>
+                                                        <span>📅 <%= new Date(thread.createdAt).toLocaleDateString() %>
+                                                                </span>
+                                                        <span
+                                                            class="badge <%= thread.category === 'question' ? 'badge-info' : thread.category === 'announcement' ? 'badge-warning' : 'badge-secondary' %>">
+                                                            <%= thread.category %>
+                                                        </span>
+                                                        <% if (thread.course) { %>
+                                                            <span>🎓 <%= thread.course.title %></span>
+                                                            <% } %>
+                                                                <% if (thread.resource) { %>
+                                                                    <span>📖 <%= thread.resource.title %></span>
+                                                                    <% } %>
+                                                    </div>
+                                                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                                        <%= thread.content.substring(0, 150) %>
+                                                            <%= thread.content.length> 150 ? '...' : '' %>
+                                                    </p>
+                                                    <% if (thread.tags && thread.tags.length> 0) { %>
+                                                        <div
+                                                            style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                                                            <% thread.tags.forEach(tag=> { %>
+                                                                <span class="badge badge-secondary">🏷️ <%= tag %>
+                                                                        </span>
+                                                                <% }) %>
+                                                        </div>
+                                                        <% } %>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div class="thread-stats">
+                                    <span>👍 <%= thread.votes?.up?.length || 0 %> upvotes</span>
+                                    <span>💬 <%= thread.replyCount || thread.replies?.length || 0 %> replies</span>
+                                    <span>👁️ <%= thread.views || 0 %> views</span>
+                                </div>
+                                <a href="/forums/<%= thread._id %>" class="btn btn-sm btn-outline">View Discussion →</a>
+                            </div>
+                        </div>
+                        <% }) %>
+                            <% } else { %>
+                                <div class="card" style="text-align: center; padding: 4rem 2rem;">
+                                    <div style="font-size: 4rem; margin-bottom: 1rem;">💬</div>
+                                    <h3>No discussions yet</h3>
+                                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                                        Be the first to start a conversation!
+                                    </p>
+                                    <% if (currentUser) { %>
+                                        <a href="/forums/new" class="btn btn-primary">✏️ Start a Discussion</a>
+                                        <% } else { %>
+                                            <a href="/login" class="btn btn-primary">Login to Participate</a>
+                                            <% } %>
+                                </div>
+                                <% } %>
+            </div>
+        </div>
+
+        <script src="/js/forums.js"></script>
+    </body>
+
+    </html>
