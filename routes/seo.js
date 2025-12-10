@@ -99,31 +99,5 @@ Sitemap: ${baseUrl}/sitemap.xml
     res.send(robotsTxt);
 });
 
-/**
- * Google Verification File Route
- * Handles Google Search Console HTML file verification
- * The file name will be like: google01d95ab206a7fea6.html
- * Usage: Set GOOGLE_VERIFICATION_FILE environment variable to the filename
- */
-router.get('/google*.html', (req, res) => {
-    // Get the verification file name from environment or use default
-    const verificationFile = process.env.GOOGLE_VERIFICATION_FILE;
-
-    if (!verificationFile) {
-        return res.status(404).send('Google verification not configured. Please set GOOGLE_VERIFICATION_FILE in your .env file');
-    }
-
-    // Check if the requested file matches the configured file
-    const requestedFile = req.path.substring(1); // Remove leading slash
-
-    if (requestedFile === verificationFile) {
-        // Return the verification content
-        // Google verification files just need to exist and contain: google-site-verification: [code]
-        const verificationCode = verificationFile.replace('google', '').replace('.html', '');
-        res.send(`google-site-verification: ${verificationFile}`);
-    } else {
-        res.status(404).send('Verification file not found');
-    }
-});
 
 module.exports = router;
