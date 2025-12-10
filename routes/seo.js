@@ -63,7 +63,6 @@ router.get('/sitemap.xml', async (req, res) => {
 
         // Set response headers
         res.header('Content-Type', 'application/xml');
-        res.header('Content-Encoding', 'gzip');
 
         // Generate sitemap
         const data = await streamToPromise(Readable.from(links).pipe(stream));
