@@ -4,20 +4,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <%= typeof title !=='undefined' ? title : 'EduShare Connect' %>
-    </title>
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- SEO Meta Tags -->
+    <% // Default SEO values const seoTitle=typeof title !=='undefined' ? title
+        : 'EduShare Connect - Peer-to-Peer Educational Platform' ; const seoDescription=typeof description
+        !=='undefined' ? description
+        : 'Join EduShare Connect to share and discover educational resources, connect with learners worldwide, and enhance your learning journey with courses, forums, and AI assistance.'
+        ; const seoKeywords=typeof keywords !=='undefined' ? keywords
+        : 'education, learning, resources, courses, study materials, peer learning, online education, EduShare Connect, educational platform, study tools'
+        ; const seoImage=typeof ogImage !=='undefined' ? ogImage : '/images/og-image.png' ; const
+        baseUrl=process.env.SITE_URL || 'https://edushare-connect.onrender.com' ; const canonicalUrl=typeof canonical
+        !=='undefined' ? canonical : baseUrl + (typeof currentPath !=='undefined' ? currentPath : '' ); %>
 
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="/css/design-system.css">
-    <link rel="stylesheet" href="/css/components.css">
-    <link rel="stylesheet" href="/css/style.css?v=3">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <title>
+            <%= seoTitle %>
+        </title>
+        <meta name="description" content="<%= seoDescription %>">
+        <meta name="keywords" content="<%= seoKeywords %>">
+        <meta name="author" content="EduShare Connect">
+        <meta name="robots" content="index, follow">
+
+        <!-- Canonical URL -->
+        <link rel="canonical" href="<%= canonicalUrl %>">
+
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="<%= typeof ogType !== 'undefined' ? ogType : 'website' %>">
+        <meta property="og:url" content="<%= canonicalUrl %>">
+        <meta property="og:title" content="<%= seoTitle %>">
+        <meta property="og:description" content="<%= seoDescription %>">
+        <meta property="og:image" content="<%= baseUrl + seoImage %>">
+        <meta property="og:site_name" content="EduShare Connect">
+
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:url" content="<%= canonicalUrl %>">
+        <meta name="twitter:title" content="<%= seoTitle %>">
+        <meta name="twitter:description" content="<%= seoDescription %>">
+        <meta name="twitter:image" content="<%= baseUrl + seoImage %>">
+
+        <!-- Google Site Verification (if configured) -->
+        <% if (process.env.GOOGLE_SITE_VERIFICATION) { %>
+            <meta name="google-site-verification" content="<%= process.env.GOOGLE_SITE_VERIFICATION %>">
+            <% } %>
+
+                <!-- Favicon -->
+                <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+                <!-- Google Fonts -->
+                <link rel="preconnect" href="https://fonts.googleapis.com">
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+                    rel="stylesheet">
+
+                <!-- Stylesheets -->
+                <link rel="stylesheet" href="/css/design-system.css">
+                <link rel="stylesheet" href="/css/components.css">
+                <link rel="stylesheet" href="/css/style.css?v=3">
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+                <!-- Structured Data (JSON-LD) -->
+                <% if (typeof structuredData !=='undefined' ) { %>
+                    <script type="application/ld+json">
+        <%- structuredData %>
+    </script>
+                    <% } else { %>
+                        <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "EduShare Connect",
+        "description": "Peer-to-peer educational platform for sharing knowledge and resources",
+        "url": "<%= baseUrl %>",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "<%= baseUrl %>/resources?search={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+                        <% } %>
 </head>
 
 <body>
@@ -106,7 +171,8 @@
             </div>
             <div
                 style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--gray-800);">
-                <p style="color: var(--gray-500);">&copy; 2024 EduShare Connect. All rights reserved.</p>
+                <p style="color: var(--gray-500);">&copy; <span id="layout-footer-year"></span> EduShare Connect. All
+                    rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -119,6 +185,12 @@
     <script src="/js/notes.js"></script>
     <script src="/js/forums.js"></script>
     <script>
+        // Set dynamic copyright year
+        const yearElement = document.getElementById('layout-footer-year');
+        if (yearElement) {
+            yearElement.textContent = new Date().getFullYear();
+        }
+
         // Mobile navigation toggle
         document.getElementById('navbarToggle')?.addEventListener('click', function () {
             this.classList.toggle('active');

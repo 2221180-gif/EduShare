@@ -39,11 +39,18 @@ app.use(session({
     cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 24 hours
 }));
 
+// SEO Middleware (must be before routes)
+const { seoMiddleware } = require('./utils/seo');
+app.use(seoMiddleware);
+
 // View Engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Routes
+// SEO Routes (must be first to handle /sitemap.xml and /robots.txt)
+app.use('/', require('./routes/seo'));
+
+// Application Routes
 app.use('/', require('./routes/auth'));
 app.use('/resources', require('./routes/resources'));
 app.use('/reviews', require('./routes/reviews'));
