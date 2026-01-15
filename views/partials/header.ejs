@@ -118,7 +118,16 @@
     <nav class="navbar">
         <div class="container">
             <a href="/" class="logo">EduShare Connect</a>
-            <ul class="nav-links">
+
+            <!-- Hamburger Menu Button -->
+            <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <!-- Navigation Links -->
+            <ul class="nav-links" id="nav-menu">
                 <li><a href="/" class="nav-item-highlight"><i class="fas fa-home"></i> Home</a></li>
                 <li><a href="/resources" class="nav-item-highlight"><i class="fas fa-book"></i> Resources</a></li>
                 <li><a href="/forums" class="nav-item-highlight"><i class="fas fa-comments-alt"></i> Discussion</a></li>
@@ -143,9 +152,8 @@
                     <li><a href="/resources/upload/new" class="nav-item-highlight"><i
                                 class="fas fa-cloud-upload-alt"></i> Upload</a></li>
                     <li class="user-menu">
-                        <span style="white-space: nowrap; font-size: 0.9rem; color: var(--text-muted);">Welcome, <%=
-                                user.username %></span>
-                        <a href="/logout" class="btn-small" style="margin-left: 10px;">Logout</a>
+                        <span class="user-welcome">Welcome, <%= user.username %></span>
+                        <a href="/logout" class="btn-small">Logout</a>
                     </li>
                     <% } else { %>
                         <li><a href="/login" class="nav-item-highlight"><i class="fas fa-sign-in-alt"></i> Login</a>
@@ -156,6 +164,39 @@
             </ul>
         </div>
     </nav>
+
+    <!-- Hamburger Menu Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const hamburger = document.getElementById('hamburger-btn');
+            const navMenu = document.getElementById('nav-menu');
+
+            hamburger.addEventListener('click', function () {
+                hamburger.classList.toggle('active');
+                navMenu.classList.toggle('active');
+                document.body.classList.toggle('menu-open');
+            });
+
+            // Close menu when clicking a link
+            const navLinks = navMenu.querySelectorAll('a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function () {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                    document.body.classList.remove('menu-open');
+                });
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', function (event) {
+                if (!navMenu.contains(event.target) && !hamburger.contains(event.target)) {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                    document.body.classList.remove('menu-open');
+                }
+            });
+        });
+    </script>
 
     <!-- Motivational Banner -->
     <div class="motivational-banner">
