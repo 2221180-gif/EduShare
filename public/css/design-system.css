@@ -394,6 +394,78 @@ textarea.form-control {
 }
 
 /* ===================================
+   RESPONSIVE GRID UTILITIES
+   =================================== */
+@media (max-width: 1024px) {
+    .col-lg-12 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .col-lg-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .col-lg-4 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+
+    .col-lg-3 {
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+}
+
+@media (max-width: 768px) {
+    .col-md-12 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .row.stack-mobile>[class*="col-"] {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .col-sm-12 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+/* Visibility Utilities */
+.hide-mobile {
+    @media (max-width: 768px) {
+        display: none !important;
+    }
+}
+
+.show-mobile {
+    display: none !important;
+
+    @media (max-width: 768px) {
+        display: block !important;
+    }
+}
+
+.show-mobile-flex {
+    display: none !important;
+
+    @media (max-width: 768px) {
+        display: flex !important;
+    }
+}
+
+/* ===================================
    UTILITIES
    =================================== */
 .text-center {

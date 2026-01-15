@@ -39,11 +39,7 @@ body {
     font-size: 16px;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
-}
+/* Standardized container from design-system.css */
 
 /* Navbar */
 .navbar {
@@ -139,6 +135,13 @@ body {
 .nav-item-highlight.special:hover {
     box-shadow: 0 6px 20px rgba(118, 75, 162, 0.4);
     transform: translateY(-2px) scale(1.05);
+}
+
+/* Mobile Navbar Brand Adjustment */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.25rem;
+    }
 }
 
 .user-menu {
@@ -261,6 +264,28 @@ body {
     margin-left: auto;
     margin-right: auto;
     position: relative;
+}
+
+@media (max-width: 768px) {
+    .hero {
+        padding: 60px 0;
+        border-radius: 0 0 20px 20px;
+        text-align: center;
+    }
+
+    .hero h1 {
+        font-size: 2.25rem;
+    }
+
+    .hero p {
+        font-size: 1.1rem;
+        padding: 0 20px;
+    }
+
+    .hero .btn {
+        width: 100%;
+        margin: 10px 0;
+    }
 }
 
 /* Buttons */

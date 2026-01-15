@@ -127,6 +127,48 @@
             color: #667eea;
         }
 
+        /* Improved Grid for Mobile */
+        @media (max-width: 768px) {
+            .hero-section {
+                min-height: 60vh;
+                padding: 4rem 1rem;
+            }
+
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-content p {
+                font-size: 1.1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                width: 100%;
+                max-width: 300px;
+                margin: 0 auto;
+            }
+
+            .btn-hero {
+                width: 100%;
+                padding: 0.8rem 1.5rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+
+            .quick-links-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
         .features-section {
             padding: 4rem 2rem;
             background: #f8f9fa;
@@ -198,24 +240,6 @@
         .stat-label {
             font-size: 1.1rem;
             opacity: 0.9;
-        }
-
-        @media (max-width: 768px) {
-            .hero-content h1 {
-                font-size: 2.5rem;
-            }
-
-            .hero-content p {
-                font-size: 1.1rem;
-            }
-
-            .cta-buttons {
-                flex-direction: column;
-            }
-
-            .btn-hero {
-                width: 100%;
-            }
         }
     </style>
 
@@ -333,34 +357,34 @@
                 Quick Access
             </h2>
 
-            <div
-                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; max-width: 1000px; margin: 0 auto;">
+            <div class="quick-links-grid"
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; max-width: 1000px; margin: 0 auto;">
                 <a href="/resources"
-                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem; border-radius: 15px; color: white; text-decoration: none; text-align: center; transition: transform 0.3s;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">📖</div>
-                    <h3 style="margin-bottom: 0.5rem;">Resources</h3>
-                    <p style="opacity: 0.9; font-size: 0.95rem;">Browse learning materials</p>
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 1.5rem; border-radius: 15px; color: white; text-decoration: none; text-align: center; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📖</div>
+                    <h3 style="margin-bottom: 0.25rem; font-size: 1.25rem;">Resources</h3>
+                    <p style="opacity: 0.9; font-size: 0.85rem; margin: 0;">Browse materials</p>
                 </a>
 
                 <a href="/courses"
-                    style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 2rem; border-radius: 15px; color: white; text-decoration: none; text-align: center; transition: transform 0.3s;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">🎓</div>
-                    <h3 style="margin-bottom: 0.5rem;">Courses</h3>
-                    <p style="opacity: 0.9; font-size: 0.95rem;">Enroll in structured learning</p>
+                    style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 1.5rem; border-radius: 15px; color: white; text-decoration: none; text-align: center; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🎓</div>
+                    <h3 style="margin-bottom: 0.25rem; font-size: 1.25rem;">Courses</h3>
+                    <p style="opacity: 0.9; font-size: 0.85rem; margin: 0;">Enroll today</p>
                 </a>
 
                 <a href="/forums"
-                    style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 2rem; border-radius: 15px; color: white; text-decoration: none; text-align: center; transition: transform 0.3s;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">💬</div>
-                    <h3 style="margin-bottom: 0.5rem;">Forums</h3>
-                    <p style="opacity: 0.9; font-size: 0.95rem;">Join discussions</p>
+                    style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 1.5rem; border-radius: 15px; color: white; text-decoration: none; text-align: center; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">💬</div>
+                    <h3 style="margin-bottom: 0.25rem; font-size: 1.25rem;">Forums</h3>
+                    <p style="opacity: 0.9; font-size: 0.85rem; margin: 0;">Join discussions</p>
                 </a>
 
                 <a href="/reels"
-                    style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); padding: 2rem; border-radius: 15px; color: white; text-decoration: none; text-align: center; transition: transform 0.3s;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">🎬</div>
-                    <h3 style="margin-bottom: 0.5rem;">Reels</h3>
-                    <p style="opacity: 0.9; font-size: 0.95rem;">Watch short videos</p>
+                    style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); padding: 1.5rem; border-radius: 15px; color: white; text-decoration: none; text-align: center; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🎬</div>
+                    <h3 style="margin-bottom: 0.25rem; font-size: 1.25rem;">Reels</h3>
+                    <p style="opacity: 0.9; font-size: 0.85rem; margin: 0;">Watch videos</p>
                 </a>
             </div>
         </div>
