@@ -246,6 +246,72 @@
                 transform: translateY(-10px);
             }
         }
+
+        @media (max-width: 768px) {
+            .ai-chat-container {
+                margin: 0;
+                height: calc(100vh - 120px);
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .ai-chat-messages {
+                padding: 15px;
+            }
+
+            .ai-message,
+            .user-message {
+                gap: 10px;
+                margin-bottom: 15px;
+            }
+
+            .ai-content,
+            .user-content {
+                padding: 12px 15px;
+                font-size: 0.95rem;
+            }
+
+            .ai-chat-input-area {
+                padding: 10px;
+            }
+
+            #ai-message-input {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+
+            #send-btn {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+                margin-top: 10px;
+            }
+
+            p {
+                font-size: 0.9rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .ai-avatar,
+            .user-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 1.1rem;
+            }
+
+            .ai-chat-input-area>div {
+                gap: 5px !important;
+            }
+
+            .ai-chat-input-area .btn {
+                padding: 10px !important;
+            }
+        }
     </style>
 
     <script>
