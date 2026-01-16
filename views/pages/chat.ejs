@@ -95,6 +95,45 @@
         .user-item.online .online-indicator {
             display: block;
         }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .chat-container {
+                flex-direction: column;
+                height: calc(100vh - 120px) !important;
+                margin: 0 !important;
+                border-radius: 0;
+            }
+
+            .chat-sidebar {
+                width: 100% !important;
+                height: 150px;
+                border-right: none;
+                border-bottom: 1px solid #ddd;
+                flex: none;
+            }
+
+            .chat-main {
+                height: calc(100% - 150px);
+            }
+
+            .chat-messages {
+                padding: 10px;
+            }
+
+            .message {
+                max-width: 85%;
+            }
+
+            .chat-input {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+                margin-top: 10px;
+            }
+        }
     </style>
 
     <div class="mb-2">
@@ -185,7 +224,7 @@
                         if (data.messages && data.messages.length > 0) {
                             data.messages.forEach(msg => appendMessage(msg));
                         } else {
-                            messagesDiv.innerHTML = '<div style="text-align: center; color: #999; margin-top: 50px;">No messages yet. Start the conversation!</div>';
+                            messagesDiv.innerHTML = '<div id="no-messages-placeholder" style="text-align: center; color: #999; margin-top: 50px;">No messages yet. Start the conversation!</div>';
                         }
 
                         messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -227,6 +266,17 @@
                 };
 
                 function appendMessage(msg) {
+                    const messagesDiv = document.getElementById('chat-messages');
+
+                    // Remove placeholder if it exists
+                    const placeholder = document.getElementById('no-messages-placeholder');
+                    if (placeholder) placeholder.remove();
+
+                    // Also remove the "Select a user" placeholder if it exists
+                    if (messagesDiv.children.length === 1 && messagesDiv.firstChild.innerText === 'Select a user to start chatting') {
+                        messagesDiv.innerHTML = '';
+                    }
+
                     const div = document.createElement('div');
                     const isMe = msg.sender._id === currentUserId || msg.sender === currentUserId;
                     div.className = `message ${isMe ? 'sent' : 'received'}`;
@@ -240,12 +290,15 @@
                         const deleteBtn = document.createElement('span');
                         deleteBtn.className = 'delete-btn';
                         deleteBtn.innerText = '×';
-                        deleteBtn.onclick = () => deleteMessage(msg._id);
+                        deleteBtn.onclick = (e) => {
+                            e.stopPropagation();
+                            deleteMessage(msg._id);
+                        };
                         div.appendChild(deleteBtn);
                     }
 
-                    document.getElementById('chat-messages').appendChild(div);
-                    document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+                    messagesDiv.appendChild(div);
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
                 }
 
                 document.getElementById('message-input').addEventListener('keypress', (e) => {
