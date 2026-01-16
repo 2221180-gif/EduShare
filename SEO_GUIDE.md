@@ -354,5 +354,5 @@ For more help:
 
 ---
 
-**Last Updated**: December 2024  
-**Version**: 1.0
+**Last Updated**: January 2026  
+**Version**: 1.1
