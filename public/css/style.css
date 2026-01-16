@@ -60,8 +60,6 @@ body {
     top: 0;
     z-index: 10001;
     border-bottom: 1px solid var(--border-color);
-    overflow: hidden;
-    /* Prevent menu overflow from creating horizontal scroll */
 }
 
 .navbar .container {
