@@ -28,7 +28,29 @@ const userSchema = new mongoose.Schema({
         bio: String,
         subjects: [String],
         avatar: String,
-        gradeLevel: String
+        gradeLevel: String,
+        department: {
+            type: String,
+            enum: [
+                'Computer Science & Engineering',
+                'Electrical & Electronic Engineering',
+                'Mechanical Engineering',
+                'Civil Engineering',
+                'Business Administration',
+                'Economics',
+                'English',
+                'Mathematics',
+                'Physics',
+                'Chemistry',
+                'Biology',
+                'Pharmacy',
+                'Architecture',
+                'Textile Engineering',
+                'Law',
+                'Medicine',
+                'Other'
+            ]
+        }
     },
     gamification: {
         points: { type: Number, default: 0 },

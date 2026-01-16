@@ -38,7 +38,8 @@ router.post('/login', async (req, res) => {
             id: user._id,
             username: user.username,
             role: user.role,
-            email: user.email
+            email: user.email,
+            department: user.profile?.department
         };
 
         res.redirect('/');
@@ -55,7 +56,7 @@ router.post('/login', async (req, res) => {
 // Register Logic
 router.post('/register', async (req, res) => {
     try {
-        const { username, email, password, role } = req.body;
+        const { username, email, password, role, department } = req.body;
 
         const existingUser = await User.findOne({ $or: [{ email }, { username }] });
         if (existingUser) {
@@ -70,7 +71,10 @@ router.post('/register', async (req, res) => {
             username,
             email,
             password,
-            role: role || 'student'
+            role: role || 'student',
+            profile: {
+                department: department || null
+            }
         });
 
         await user.save();
@@ -79,7 +83,8 @@ router.post('/register', async (req, res) => {
             id: user._id,
             username: user.username,
             role: user.role,
-            email: user.email
+            email: user.email,
+            department: user.profile?.department
         };
 
         res.redirect('/');
@@ -89,6 +94,86 @@ router.post('/register', async (req, res) => {
             title: 'Register - EduShare Connect',
             user: null,
             error: 'An error occurred during registration'
+        });
+    }
+});
+
+// Profile Settings Page
+router.get('/profile/settings', async (req, res) => {
+    if (!req.session.user) {
+        return res.redirect('/login');
+    }
+
+    try {
+        const user = await User.findById(req.session.user.id);
+        res.render('pages/profile-settings', {
+            title: 'Profile Settings - EduShare Connect',
+            user: req.session.user,
+            userProfile: user,
+            success: null,
+            error: null
+        });
+    } catch (error) {
+        console.error('Profile settings error:', error);
+        res.redirect('/');
+    }
+});
+
+// Update Profile Settings
+router.post('/profile/settings', async (req, res) => {
+    if (!req.session.user) {
+        return res.redirect('/login');
+    }
+
+    try {
+        const { bio, gradeLevel, department, subjects } = req.body;
+
+        const user = await User.findById(req.session.user.id);
+
+        // Initialize profile object if it doesn't exist
+        if (!user.profile) {
+            user.profile = {};
+        }
+
+        // Update profile fields
+        if (bio !== undefined && bio !== '') {
+            user.profile.bio = bio;
+        }
+        if (gradeLevel !== undefined && gradeLevel !== '') {
+            user.profile.gradeLevel = gradeLevel;
+        }
+        if (department !== undefined && department !== '') {
+            user.profile.department = department;
+        }
+
+        // Parse subjects from comma-separated string
+        if (subjects) {
+            user.profile.subjects = subjects.split(',').map(s => s.trim()).filter(s => s);
+        }
+
+        // Mark profile as modified to ensure Mongoose saves it
+        user.markModified('profile');
+        await user.save();
+
+        // Update session with new department
+        req.session.user.department = department;
+
+        res.render('pages/profile-settings', {
+            title: 'Profile Settings - EduShare Connect',
+            user: req.session.user,
+            userProfile: user,
+            success: 'Profile updated successfully!',
+            error: null
+        });
+    } catch (error) {
+        console.error('Profile update error:', error);
+        const user = await User.findById(req.session.user.id);
+        res.render('pages/profile-settings', {
+            title: 'Profile Settings - EduShare Connect',
+            user: req.session.user,
+            userProfile: user,
+            success: null,
+            error: 'Failed to update profile. Please try again.'
         });
     }
 });

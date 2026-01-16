@@ -1,0 +1,126 @@
+<%- include('../partials/header') %>
+    <div class="card" style="max-width: 600px; margin: 0 auto;">
+        <h2 class="mb-2"><i class="fas fa-user-cog"></i> Profile Settings</h2>
+
+        <% if (locals.success) { %>
+            <div class="alert alert-success">
+                <%= success %>
+            </div>
+            <% } %>
+
+                <% if (locals.error) { %>
+                    <div class="alert alert-error">
+                        <%= error %>
+                    </div>
+                    <% } %>
+
+                        <form action="/profile/settings" method="POST">
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <input type="text" id="username" name="username" value="<%= user.username %>" readonly
+                                    disabled>
+                                <small class="text-muted">Username cannot be changed</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" value="<%= user.email %>" readonly disabled>
+                                <small class="text-muted">Email cannot be changed</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="bio">Bio</label>
+                                <textarea id="bio" name="bio" rows="3"
+                                    placeholder="Tell us about yourself..."><%= userProfile.profile?.bio || '' %></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="gradeLevel">Grade Level</label>
+                                <input type="text" id="gradeLevel" name="gradeLevel"
+                                    value="<%= userProfile.profile?.gradeLevel || '' %>"
+                                    placeholder="e.g., 3rd Year, Graduate">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="department">Department/Field of Study <span
+                                        style="color: var(--accent-color);">*</span></label>
+                                <select id="department" name="department" required>
+                                    <option value="">Select your department</option>
+                                    <option value="Computer Science & Engineering"
+                                        <%=userProfile.profile?.department==='Computer Science & Engineering'
+                                        ? 'selected' : '' %>>Computer Science & Engineering</option>
+                                    <option value="Electrical & Electronic Engineering"
+                                        <%=userProfile.profile?.department==='Electrical & Electronic Engineering'
+                                        ? 'selected' : '' %>>Electrical & Electronic Engineering</option>
+                                    <option value="Mechanical Engineering"
+                                        <%=userProfile.profile?.department==='Mechanical Engineering' ? 'selected' : ''
+                                        %>
+                                        >Mechanical Engineering</option>
+                                    <option value="Civil Engineering"
+                                        <%=userProfile.profile?.department==='Civil Engineering' ? 'selected' : '' %>
+                                        >Civil Engineering</option>
+                                    <option value="Business Administration"
+                                        <%=userProfile.profile?.department==='Business Administration' ? 'selected' : ''
+                                        %>
+                                        >Business Administration</option>
+                                    <option value="Economics" <%=userProfile.profile?.department==='Economics'
+                                        ? 'selected' : '' %>>Economics</option>
+                                    <option value="English" <%=userProfile.profile?.department==='English' ? 'selected'
+                                        : '' %>
+                                        >English</option>
+                                    <option value="Mathematics" <%=userProfile.profile?.department==='Mathematics'
+                                        ? 'selected' : '' %>>Mathematics</option>
+                                    <option value="Physics" <%=userProfile.profile?.department==='Physics' ? 'selected'
+                                        : '' %>
+                                        >Physics</option>
+                                    <option value="Chemistry" <%=userProfile.profile?.department==='Chemistry'
+                                        ? 'selected' : '' %>>Chemistry</option>
+                                    <option value="Biology" <%=userProfile.profile?.department==='Biology' ? 'selected'
+                                        : '' %>
+                                        >Biology</option>
+                                    <option value="Pharmacy" <%=userProfile.profile?.department==='Pharmacy'
+                                        ? 'selected' : '' %>
+                                        >Pharmacy</option>
+                                    <option value="Architecture" <%=userProfile.profile?.department==='Architecture'
+                                        ? 'selected' : '' %>>Architecture</option>
+                                    <option value="Textile Engineering"
+                                        <%=userProfile.profile?.department==='Textile Engineering' ? 'selected' : '' %>
+                                        >Textile
+                                        Engineering</option>
+                                    <option value="Law" <%=userProfile.profile?.department==='Law' ? 'selected' : '' %>
+                                        >Law
+                                    </option>
+                                    <option value="Medicine" <%=userProfile.profile?.department==='Medicine'
+                                        ? 'selected' : '' %>
+                                        >Medicine</option>
+                                    <option value="Other" <%=userProfile.profile?.department==='Other' ? 'selected' : ''
+                                        %>>Other
+                                    </option>
+                                </select>
+                                <small class="text-muted">Required for personalized job recommendations</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="subjects">Subjects/Interests (comma-separated)</label>
+                                <input type="text" id="subjects" name="subjects"
+                                    value="<%= userProfile.profile?.subjects ? userProfile.profile.subjects.join(', ') : '' %>"
+                                    placeholder="e.g., Web Development, Machine Learning, Data Science">
+                            </div>
+
+                            <button type="submit" class="btn" style="width: 100%;">
+                                <i class="fas fa-save"></i> Save Profile
+                            </button>
+                        </form>
+
+                        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+                            <h3 style="font-size: 1.2rem; margin-bottom: 10px;">Account Information</h3>
+                            <p class="text-muted" style="font-size: 0.9rem;">
+                                <strong>Role:</strong>
+                                <%= user.role %><br>
+                                    <strong>Member since:</strong>
+                                    <%= new Date(userProfile.createdAt || Date.now()).toLocaleDateString('en-US', {
+                                        year: 'numeric' , month: 'long' , day: 'numeric' }) %>
+                            </p>
+                        </div>
+    </div>
+    <%- include('../partials/footer') %>

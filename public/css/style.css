@@ -609,12 +609,20 @@ footer p {
         animation: fadeIn 0.3s ease;
     }
 
-    /* Mobile menu items */
+    /* Mobile menu items - hidden by default */
     .nav-links li {
         width: 100%;
         margin-bottom: 8px;
         opacity: 0;
         transform: translateX(30px);
+        pointer-events: none;
+        /* Prevent clicks when hidden */
+    }
+
+    .nav-links.active li {
+        opacity: 1;
+        transform: translateX(0);
+        pointer-events: auto;
         animation: slideInRight 0.4s ease forwards;
     }
 
