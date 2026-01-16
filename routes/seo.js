@@ -79,7 +79,7 @@ router.get('/sitemap.xml', async (req, res) => {
  * Serves robots.txt with sitemap reference
  */
 router.get('/robots.txt', (req, res) => {
-    const baseUrl = process.env.SITE_URL || `${req.protocol}://${req.get('host')}`;
+    const baseUrl = process.env.SITE_URL || `https://${req.get('host')}`;
 
     const robotsTxt = `# Robots.txt for EduShare Connect
 # Allow all search engines to crawl the site
