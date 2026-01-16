@@ -103,6 +103,231 @@
 </head>
 
 <body>
+    <!-- Premium Weather & Time Widget -->
+    <div id="premium-widget" class="premium-widget">
+        <div class="widget-container">
+            <div class="weather-section">
+                <div class="weather-icon-wrapper">
+                    <i id="weather-icon" class="fas fa-cloud"></i>
+                </div>
+                <div class="weather-info">
+                    <span id="weather-temp" class="temp">--°C</span>
+                    <span id="weather-desc" class="condition">Loading...</span>
+                </div>
+                <div class="location-info">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span id="weather-loc">Detecting...</span>
+                </div>
+            </div>
+            <div class="time-section">
+                <div class="date-display" id="current-date"></div>
+                <div class="time-display">
+                    <i class="far fa-clock"></i>
+                    <span id="current-time">--:--:--</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .premium-widget {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 0;
+            position: relative;
+            z-index: 1001;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .widget-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .weather-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .weather-icon-wrapper {
+            font-size: 1.5rem;
+            color: #4b6cb7;
+            filter: drop-shadow(0 2px 4px rgba(75, 108, 183, 0.2));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .weather-info {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .temp {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #1a202c;
+        }
+
+        .condition {
+            font-size: 0.75rem;
+            color: #4a5568;
+            text-transform: capitalize;
+        }
+
+        .location-info {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+            color: #718096;
+            background: rgba(0, 0, 0, 0.03);
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-left: 10px;
+        }
+
+        .location-info i {
+            color: #e53e3e;
+        }
+
+        .time-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            line-height: 1.2;
+        }
+
+        .time-display {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(90deg, #2d3748, #4a5568);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .date-display {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-3px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .widget-container {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .weather-section,
+            .time-section {
+                width: 100%;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .location-info {
+                display: none;
+                /* Hide location on very small screens to save space */
+            }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Time Update Function
+            function updateTime() {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
+
+                document.getElementById('current-time').textContent = timeStr;
+                document.getElementById('current-date').textContent = dateStr;
+            }
+            setInterval(updateTime, 1000);
+            updateTime(); // Initial call
+
+            // Weather Function
+            async function fetchWeather() {
+                const iconMap = {
+                    0: 'fa-sun', // Clear sky
+                    1: 'fa-cloud-sun', 2: 'fa-cloud-sun', 3: 'fa-cloud', // Cloudy
+                    45: 'fa-smog', 48: 'fa-smog', // Fog
+                    51: 'fa-cloud-rain', 53: 'fa-cloud-rain', 55: 'fa-cloud-showers-heavy', // Drizzle
+                    61: 'fa-cloud-rain', 63: 'fa-cloud-rain', 65: 'fa-cloud-showers-heavy', // Rain
+                    71: 'fa-snowflake', 73: 'fa-snowflake', 75: 'fa-snowflake', // Snow
+                    95: 'fa-bolt', 96: 'fa-bolt', 99: 'fa-bolt' // Thunderstorm
+                };
+
+                try {
+                    // 1. Get Location (IP-based)
+                    let locData = { city: 'Dhaka', country_name: 'Bangladesh', latitude: 23.8103, longitude: 90.4125 };
+
+                    try {
+                        const locRes = await fetch('https://ipapi.co/json/');
+                        if (locRes.ok) {
+                            locData = await locRes.json();
+                        }
+                    } catch (e) {
+                        console.warn('Location auto-detect failed, using default');
+                    }
+
+                    document.getElementById('weather-loc').textContent = `${locData.city || 'Dhaka'}, ${locData.country_name || 'Bangladesh'}`;
+
+                    // 2. Get Weather (OpenMeteo)
+                    const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${locData.latitude || 23.8103}&longitude=${locData.longitude || 90.4125}&current_weather=true`);
+                    const weatherData = await weatherRes.json();
+                    const current = weatherData.current_weather;
+
+                    // Update UI
+                    document.getElementById('weather-temp').textContent = `${Math.round(current.temperature)}°C`;
+
+                    // Map WMO code to description/icon
+                    document.getElementById('weather-desc').textContent = 'Live Weather'; // basic label
+
+                    const iconClass = iconMap[current.weathercode] || 'fa-cloud';
+                    const iconEl = document.getElementById('weather-icon');
+                    iconEl.className = `fas ${iconClass}`;
+
+                    // Colorize icon based on condition
+                    if (current.weathercode === 0) iconEl.style.color = '#f6e05e'; // Sunny yellow
+                    else if (current.weathercode >= 95) iconEl.style.color = '#805ad5'; // Storm purple
+                    else iconEl.style.color = '#4b6cb7'; // Default blue
+
+                } catch (err) {
+                    console.error('Weather widget error:', err);
+                    document.getElementById('weather-loc').textContent = 'Dhaka, Bangladesh';
+                    document.getElementById('weather-temp').textContent = '--';
+                }
+            }
+
+            fetchWeather();
+        });
+    </script>
     <div class="emoji-background">
         <div class="floating-emoji">📚</div>
         <div class="floating-emoji">🎓</div>
